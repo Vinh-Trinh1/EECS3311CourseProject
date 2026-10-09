@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>70</y><w>270</w><h>54</h></coordinates><panel_attributes>UC1 Create Account</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>148</y><w>270</w><h>54</h></coordinates><panel_attributes>UC2 Login</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>226</y><w>270</w><h>54</h></coordinates><panel_attributes>UC11 Verify Two-Factor Authentication</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>304</y><w>270</w><h>54</h></coordinates><panel_attributes>UC3 Manage Dashboard Information</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>382</y><w>270</w><h>54</h></coordinates><panel_attributes>UC4 Manage Dashboard Categories</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>460</y><w>270</w><h>54</h></coordinates><panel_attributes>UC6 Manage Savings Goal</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>538</y><w>270</w><h>54</h></coordinates><panel_attributes>UC10 Compare Budget vs Actual Spending</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>616</y><w>270</w><h>54</h></coordinates><panel_attributes>UC5 Record Monthly Expense</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>694</y><w>270</w><h>54</h></coordinates><panel_attributes>UC7 Ask AI Financial Questions</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>772</y><w>270</w><h>54</h></coordinates><panel_attributes>UC8 Generate Budget Recommendation</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>850</y><w>270</w><h>54</h></coordinates><panel_attributes>UC9 Generate Savings Recommendation</panel_attributes><additional_attributes/></element>
+<element><id>UMLActor</id><coordinates><x>40</x><y>432</y><w>90</w><h>110</h></coordinates><panel_attributes>User</panel_attributes><additional_attributes/></element>
+<element><id>UMLActor</id><coordinates><x>960</x><y>198</y><w>90</w><h>110</h></coordinates><panel_attributes>Email/SMS Service (KnockAPI)</panel_attributes><additional_attributes/></element>
+<element><id>UMLActor</id><coordinates><x>960</x><y>354</y><w>90</w><h>110</h></coordinates><panel_attributes>SQLite Database</panel_attributes><additional_attributes/></element>
+<element><id>UMLActor</id><coordinates><x>960</x><y>705</y><w>90</w><h>110</h></coordinates><panel_attributes>AI Service (ChatGPT 5)</panel_attributes><additional_attributes/></element>
+<element><id>Relation</id><coordinates><x>130</x><y>123</y><w>346</w><h>321</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;322;347;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>201</y><w>339</w><h>252</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;252;340;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>278</y><w>329</w><h>183</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;184;329;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>354</y><w>310</w><h>115</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;116;311;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>427</y><w>276</w><h>51</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;51;276;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>487</y><w>240</w><h>1</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;240;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>495</y><w>276</w><h>51</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;276;51</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>503</y><w>310</w><h>115</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;311;116</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>512</y><w>329</w><h>183</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;329;184</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>520</y><w>339</w><h>252</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;340;252</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>528</y><w>346</w><h>321</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;347;322</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>592</x><y>663</y><w>367</w><h>85</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;367;86</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>630</x><y>730</y><w>329</w><h>25</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;329;26</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>630</x><y>763</y><w>329</w><h>25</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;26;329;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>592</x><y>770</y><w>367</w><h>85</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;86;367;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>640</x><y>253</y><w>320</w><h>1</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;320;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>546</x><y>122</y><w>413</w><h>258</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;414;258</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>558</x><y>199</y><w>401</w><h>188</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;402;188</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>577</x><y>275</y><w>382</w><h>119</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;382;119</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>611</x><y>347</y><w>348</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;349;54</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>640</x><y>409</y><w>320</w><h>1</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;320;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>611</x><y>416</y><w>348</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;54;349;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>577</x><y>423</y><w>382</w><h>119</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;119;382;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>558</x><y>430</y><w>401</w><h>188</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;188;402;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>505</x><y>202</y><w>1</w><h>24</h></coordinates><panel_attributes>lt=.&gt;
+&lt;&lt;include&gt;&gt;</panel_attributes><additional_attributes>0;0;0;24</additional_attributes></element>
+</diagram>

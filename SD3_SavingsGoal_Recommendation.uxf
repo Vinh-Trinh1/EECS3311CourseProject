@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1710</w><h>825</h></coordinates><panel_attributes>title:SD3 Savings Goal and Savings Recommendation (F05, F08)
+obj=User~u
+obj=SavingsGoalGUI~g
+obj=SavingsController~c
+obj=SavingsGoalBuilder~b
+obj=SavingsGoal~sg
+obj=Account~ac
+obj=DatabaseService~db
+obj=FinancialDataFacade~f
+obj=SavingsAI~ai
+obj=AIServiceProxy~px
+u-&gt;g: submitGoal(name, target, timeframe, account)
+g-&gt;c: createGoal(details)
+c-&gt;b: setGoalDetails(name, target, timeframe)
+c-&gt;b: setLinkedAccount(account)
+c-&gt;b: build()
+b--&gt;c: SavingsGoal
+c-&gt;db: saveGoal(goal)
+db--&gt;c: confirmation
+c-&gt;sg: calculateProgress()
+sg-&gt;ac: getBalance()
+ac--&gt;sg: balance
+sg--&gt;c: percentage
+c--&gt;g: display progress bar
+u-&gt;g: requestRecommendation()
+g-&gt;c: generateSavingsRecommendation(goalId)
+c-&gt;f: getFinancialData(userId)
+f-&gt;db: load accounts, expenses, goals
+db--&gt;f: records
+f--&gt;c: FinancialData
+c-&gt;ai: analyzeSavingsGoal(goal, data)
+ai-&gt;ai: calculateMonthlyTarget(goal, data)
+ai-&gt;px: generateResponse(request)
+px--&gt;ai: AIResponse
+ai--&gt;c: Recommendation
+c--&gt;g: display amount and advice
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>875</y><w>1710</w><h>142</h></coordinates><panel_attributes>Alternative flows
+- Invalid goal fields: user is asked to correct them.
+- No savings goal: user is asked to create one.
+- Missing income/expense data: user is asked to provide it, then retries.
+- Linked balance falls or is negative: calculateProgress() lowers the percentage or shows 'no money saved yet' (it re-reads the balance each time it is displayed).
+- AI unavailable: user is told to try again later.
+- Database retrieval fails: user is told the data could not be retrieved.</panel_attributes><additional_attributes/></element>
+</diagram>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1875</w><h>879</h></coordinates><panel_attributes>title:SD6 AI Chatbox with agent tool use (F06)
+obj=User~u
+obj=ChatGUI~g
+obj=AIController~c
+obj=ChatAI~ai
+obj=AgentMemory~m
+obj=AIServiceProxy~px
+obj=ChatGPTAdapter~ad
+obj=ChatGPT5API~api
+obj=ToolRegistry~tr
+obj=GetFinancialDataTool~tool
+obj=FinancialDataFacade~f
+u-&gt;g: submitQuestion(text)
+g-&gt;c: askQuestion(text)
+c-&gt;ai: processQuestion(text)
+ai-&gt;m: recall(userId)
+m--&gt;ai: past messages and preferences
+ai-&gt;ai: run() and buildPrompt(text)
+ai-&gt;px: generateResponse(request)
+px-&gt;px: checkAccess() and rate limit
+px-&gt;ad: generateResponse(request)
+ad-&gt;api: chatCompletion(payload)
+api--&gt;ad: raw response with tool call
+ad--&gt;px: AIResponse with tool call
+px--&gt;ai: AIResponse with tool call
+ai-&gt;tr: execute(get_financial_data, args)
+tr-&gt;tool: execute(args)
+tool-&gt;f: getFinancialData(userId)
+f--&gt;tool: FinancialData
+tool--&gt;tr: ToolResult
+tr--&gt;ai: ToolResult
+ai-&gt;m: add(observation)
+ai-&gt;px: generateResponse(request + ToolResult)
+px--&gt;ai: AIResponse with final answer
+ai-&gt;ai: parseResult(response)
+ai-&gt;m: add(answer)
+ai--&gt;c: answer
+c--&gt;g: displayResponse(answer)
+g--&gt;u: answer shown
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>929</y><w>1875</w><h>126</h></coordinates><panel_attributes>Notes
+- The loop (generateResponse, tool call, observe) repeats until the model gives a final answer or maxSteps is reached.
+Alternative flows
+- AI unavailable or too slow: user is told to try again in a few minutes.
+- Proxy rejects the request (access or rate limit): same message.
+- Unusable response: user is told a response could not be generated.</panel_attributes><additional_attributes/></element>
+</diagram>

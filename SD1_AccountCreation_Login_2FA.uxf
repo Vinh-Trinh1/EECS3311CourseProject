@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1545</w><h>960</h></coordinates><panel_attributes>title:SD1 Account Creation and Login with 2FA (F01, F10)
+obj=User~u
+obj=LoginGUI~g
+obj=AccountController~c
+obj=AuthenticationService~a
+obj=DatabaseService~d
+obj=TwoFactorAuthenticationProxy~p
+obj=TwoFactorAuthentication~t
+obj=EmailSMSService~e
+obj=DashboardGUI~dg
+u-&gt;g: submitAccountInfo(email, phone, password, confirm, contactPref)
+g-&gt;c: createAccount(info)
+c-&gt;a: validateAccountInfo(info)
+a-&gt;d: findUser(email, phone)
+d--&gt;a: exists or not
+a-&gt;a: createAccount(info)
+a-&gt;d: saveUser(user)
+d--&gt;a: confirmation
+a--&gt;c: accountCreated
+c--&gt;g: showMessage(account created)
+u-&gt;g: submitLogin(identifier, password)
+g-&gt;c: login(identifier, password)
+c-&gt;a: verifyCredentials(identifier, password)
+a-&gt;d: findUser(identifier)
+d--&gt;a: User
+a-&gt;p: requestCode(user)
+p-&gt;t: requestCode(user)
+t-&gt;t: generateCode()
+t-&gt;e: sendCode(contact, code)
+e--&gt;u: 6-digit code by email or SMS
+u-&gt;g: submitCode(code)
+g-&gt;c: verifyCode(code)
+c-&gt;a: verifyCode(user, code)
+a-&gt;p: verifyCode(user, code)
+p-&gt;p: checkLockout()
+p-&gt;t: verifyCode(user, code)
+t--&gt;p: AuthResult
+p--&gt;a: AuthResult
+a--&gt;c: AuthResult
+c-&gt;dg: displayDashboard()
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>1010</y><w>1545</w><h>142</h></coordinates><panel_attributes>Alternative flows
+- Missing/invalid fields: user is asked to correct them.
+- Email or phone already exists: user is told to log in to the existing account.
+- Wrong password: login denied, no code sent.
+- Wrong code: retry; after 3 failures the proxy locks the user out temporarily.
+- Code expired: user requests a new code.
+- EmailSMSService unavailable: user is told the code could not be sent.</panel_attributes><additional_attributes/></element>
+</diagram>
