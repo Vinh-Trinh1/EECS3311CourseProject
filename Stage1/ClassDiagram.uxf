@@ -1,0 +1,1492 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>90</x>
+      <y>0</y>
+      <w>236</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>LoginGUI
+--
+-controller: AccountController
+--
++submitAccountInfo()
++submitLogin()
++submitCode()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>430</x>
+      <y>0</y>
+      <w>250</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>DashboardGUI
+--
+-controller: DashboardController
+--
++submitBalance()
++addCategory()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>780</x>
+      <y>0</y>
+      <w>236</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>ExpenseGUI
+--
+-controller: ExpenseController
+--
++submitExpense()
++confirmCategory()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1120</x>
+      <y>0</y>
+      <w>236</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>SavingsGoalGUI
+--
+-controller: SavingsController
+--
++submitGoal()
++requestRecommendation()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1460</x>
+      <y>0</y>
+      <w>229</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>BudgetGUI
+--
+-controller: BudgetController
+--
++requestBudget()
++selectPeriod()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1820</x>
+      <y>0</y>
+      <w>201</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>ChatGUI
+--
+-controller: AIController
+--
++submitQuestion()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>130</x>
+      <y>240</y>
+      <w>166</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>AccountController
+--
+
+--
++createAccount(info)
++login(id, pw)
++verifyCode(code)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>450</x>
+      <y>240</y>
+      <w>208</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>DashboardController
+--
+
+--
++updateBalance(acct, amt)
++createCategory(name, bal)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>790</x>
+      <y>240</y>
+      <w>201</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>ExpenseController
+--
+
+--
++recordExpense(data)
++assignCategory(exp, cat)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>240</y>
+      <w>264</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>SavingsController
+--
+
+--
++createGoal(details)
++linkAccount(acct)
++generateSavingsRecommendation(id)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1460</x>
+      <y>240</y>
+      <w>236</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>BudgetController
+--
+
+--
++generateBudget(period)
++compareBudgetToActual(period)
++calculateActual()
++calculateDifference()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1840</x>
+      <y>240</y>
+      <w>152</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>AIController
+--
+
+--
++askQuestion(text)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>450</x>
+      <y>510</y>
+      <w>208</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>AuthenticationService
+--
+
+--
++validateAccountInfo(info)
++createAccount(info)
++verifyCredentials(id, pw)
++verifyCode(user, code)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2490</x>
+      <y>510</y>
+      <w>222</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Facade&gt;&gt;
+FinancialDataFacade
+--
+
+--
++getFinancialData(userId)
++getBudget(userId, period)
++getExpenses(userId, period)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>790</x>
+      <y>510</y>
+      <w>215</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>ExpenseCategorizerAI
+--
+
+--
++categorizeExpense(expense)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1440</x>
+      <y>510</y>
+      <w>271</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>SavingsAI
+--
+
+--
++analyzeSavingsGoal(goal, data)
++calculateMonthlyTarget(goal, data)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2170</x>
+      <y>510</y>
+      <w>194</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>BudgetAI
+--
+
+--
++analyzeFinances(data)
++calculateBaseline(data)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1830</x>
+      <y>510</y>
+      <w>180</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>ChatAI
+--
+
+--
++processQuestion(text)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>510</y>
+      <w>271</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Builder&gt;&gt;
+SavingsGoalBuilder
+--
+
+--
++setGoalDetails(name, target, time)
++setLinkedAccount(acct)
++build(): SavingsGoal</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>770</y>
+      <w>187</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+TwoFactorService
+--
+
+--
++requestCode(user)
++verifyCode(user, code)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>800</x>
+      <y>770</y>
+      <w>187</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Composite&gt;&gt; interface
+CategoryComponent
+--
+
+--
++getBalance()
++updateBalance(amt)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2550</x>
+      <y>770</y>
+      <w>117</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>FinancialData
+--
+-accounts
+-expenses
+-income
+-goals
+-budget</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1830</x>
+      <y>770</y>
+      <w>180</w>
+      <h>179</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;abstract&gt;&gt;
+FinanceAgent
+--
+-aiService: AIService
+-memory: AgentMemory
+-tools: ToolRegistry
+-maxSteps: int
+--
++run(input)
+#buildPrompt(input)
+#parseResult(response)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2170</x>
+      <y>770</y>
+      <w>180</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>Recommendation
+--
+-period
+-suggestedAmounts: Map
+-advice: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1150</x>
+      <y>770</y>
+      <w>166</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>SavingsGoal
+--
+-name
+-targetAmount
+-timeframe
+-linkedAccount
+--
++calculateProgress()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>100</x>
+      <y>1080</y>
+      <w>222</w>
+      <h>164</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Proxy&gt;&gt;
+TwoFactorAuthenticationProxy
+--
+-failedAttempts: int
+-maxAttempts = 3
+-lockedUntil
+--
++requestCode(user)
++verifyCode(user, code)
+-checkLockout()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>470</x>
+      <y>1080</y>
+      <w>159</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;leaf&gt;&gt;
+Category
+--
+-name
+-balance
+--
++updateBalance(amt)
++getBalance()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>840</x>
+      <y>1080</y>
+      <w>117</w>
+      <h>149</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;composite&gt;&gt;
+CategoryGroup
+--
+-name
+-children
+--
++add(c)
++remove(c)
++getBalance()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2200</x>
+      <y>1080</y>
+      <w>131</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>AgentMemory
+--
+-messages
+-preferences
+--
++add(entry)
++recall(userId)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2520</x>
+      <y>1080</y>
+      <w>166</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>ToolRegistry
+--
+-tools: Map
+--
++register(tool)
++execute(name, args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1780</x>
+      <y>1080</y>
+      <w>292</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+AIService
+--
+
+--
++generateResponse(request): AIResponse</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1160</x>
+      <y>1080</y>
+      <w>159</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>Account
+--
+-accountId
+-name
+-balance
+--
++updateBalance(amt)
++getBalance()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>1380</y>
+      <w>187</w>
+      <h>149</h>
+    </coordinates>
+    <panel_attributes>TwoFactorAuthentication
+--
+-expiryMinutes
+-codeLength = 6
+--
++requestCode(user)
++verifyCode(user, code)
+-generateCode()
+-sendCode()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>450</x>
+      <y>1380</y>
+      <w>208</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Singleton&gt;&gt;
+DatabaseService
+--
+-instance: DatabaseService
+-connection: SQLite
+--
++getInstance()
++saveUser()
++saveAccount()
++saveCategory()
++saveExpense()
++saveGoal()
++saveBudget()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>820</x>
+      <y>1380</y>
+      <w>152</w>
+      <h>149</h>
+    </coordinates>
+    <panel_attributes>User
+--
+-userId
+-email
+-phone
+-passwordHash
+-contactPreference
+--
++getContact()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2500</x>
+      <y>1380</y>
+      <w>208</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+AgentTool
+--
+
+--
++getName()
++execute(args): ToolResult</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1820</x>
+      <y>1380</y>
+      <w>208</w>
+      <h>149</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Proxy&gt;&gt;
+AIServiceProxy
+--
+-rateLimiter
+-cache
+-realService: AIService
+--
++generateResponse(request)
+-checkAccess()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1480</x>
+      <y>1380</y>
+      <w>208</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Adapter&gt;&gt;
+ChatGPTAdapter
+--
+-api: ChatGPT5API
+--
++generateResponse(request)
++adaptResponse(raw)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>1710</y>
+      <w>187</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;external&gt;&gt;
+EmailSMSService
+--
+
+--
++send(contact, message)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>830</x>
+      <y>1710</y>
+      <w>124</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>Expense
+--
+-amount
+-date
+-description
+-category
+--
++getCategory()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1500</x>
+      <y>1710</y>
+      <w>166</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>Budget
+--
+-period
+-totalAmount
+-categoryLimits: Map
+--
++createBudget(rec)
++getLimit(category)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2860</x>
+      <y>1710</y>
+      <w>166</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>GetFinancialDataTool
+--
+
+--
++execute(args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2190</x>
+      <y>1710</y>
+      <w>145</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>CompareBudgetTool
+--
+
+--
++execute(args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2530</x>
+      <y>1710</y>
+      <w>152</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>ProjectSavingsTool
+--
+
+--
++execute(args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1820</x>
+      <y>1710</y>
+      <w>194</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;external&gt;&gt;
+ChatGPT5API
+--
+
+--
++chatCompletion(payload)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1560</x>
+      <y>90</y>
+      <w>40</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>90</y>
+      <w>40</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>340</y>
+      <w>40</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1220</x>
+      <y>350</y>
+      <w>40</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1910</x>
+      <y>590</y>
+      <w>30</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;185.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2250</x>
+      <y>600</y>
+      <w>30</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>90</y>
+      <w>40</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1220</x>
+      <y>90</y>
+      <w>40</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1900</x>
+      <y>70</y>
+      <w>50</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;166.0;20.0;166.0;20.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1900</x>
+      <y>320</y>
+      <w>50</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>20.0;10.0;20.0;177.0;10.0;177.0;10.0;185.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>190</x>
+      <y>100</y>
+      <w>50</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>20.0;10.0;20.0;136.0;10.0;136.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>1240</y>
+      <w>100</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1
+real subject</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1220</x>
+      <y>630</y>
+      <w>70</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;build&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2590</x>
+      <y>1180</y>
+      <w>50</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1220</x>
+      <y>900</y>
+      <w>50</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;185.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2590</x>
+      <y>630</y>
+      <w>30</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>880</y>
+      <w>30</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1910</x>
+      <y>1180</y>
+      <w>30</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1900</x>
+      <y>1180</y>
+      <w>90</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1
+delegates</panel_attributes>
+    <additional_attributes>20.0;200.0;20.0;195.0;10.0;195.0;10.0;15.0;20.0;15.0;20.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>1510</y>
+      <w>50</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>880</y>
+      <w>30</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>870</x>
+      <y>880</y>
+      <w>60</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>20.0;200.0;20.0;189.0;10.0;189.0;10.0;19.0;20.0;19.0;20.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>1510</y>
+      <w>50</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1910</x>
+      <y>940</y>
+      <w>50</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1570</x>
+      <y>1480</y>
+      <w>90</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;adapts&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2590</x>
+      <y>1480</y>
+      <w>30</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>270</x>
+      <y>350</y>
+      <w>220</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;147.0;190.0;147.0;190.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>280</x>
+      <y>630</y>
+      <w>210</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>180.0;10.0;180.0;128.0;10.0;128.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1660</x>
+      <y>1180</y>
+      <w>280</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>260.0;10.0;260.0;185.0;10.0;185.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>70</x>
+      <y>880</y>
+      <w>160</w>
+      <h>520</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>140.0;10.0;140.0;179.0;10.0;179.0;10.0;479.0;140.0;479.0;140.0;494.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1330</x>
+      <y>350</y>
+      <w>150</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;137.0;120.0;137.0;120.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1910</x>
+      <y>600</y>
+      <w>290</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;170.0;10.0;18.0;270.0;18.0;270.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>940</x>
+      <y>1210</y>
+      <w>270</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;170.0;10.0;45.0;230.0;45.0;230.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>600</x>
+      <y>880</y>
+      <w>310</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>290.0;10.0;290.0;179.0;10.0;179.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2310</x>
+      <y>1480</y>
+      <w>310</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>290.0;10.0;290.0;206.0;10.0;206.0;10.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1680</x>
+      <y>600</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>240.0;170.0;240.0;18.0;10.0;18.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1980</x>
+      <y>940</y>
+      <w>260</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;119.0;230.0;119.0;230.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1660</x>
+      <y>1480</y>
+      <w>200</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;226.0;170.0;226.0;170.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2590</x>
+      <y>1480</y>
+      <w>300</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;206.0;280.0;206.0;280.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>630</y>
+      <w>150</w>
+      <h>770</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>110.0;10.0;110.0;428.0;10.0;428.0;10.0;728.0;110.0;728.0;110.0;743.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>630</x>
+      <y>340</y>
+      <w>220</w>
+      <h>460</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;22.0;140.0;22.0;140.0;422.0;180.0;422.0;180.0;434.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>940</x>
+      <y>900</y>
+      <w>260</w>
+      <h>500</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;479.0;10.0;474.0;30.0;474.0;30.0;14.0;220.0;14.0;220.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1670</x>
+      <y>370</y>
+      <w>540</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;22.0;510.0;22.0;510.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>600</x>
+      <y>1210</y>
+      <w>280</w>
+      <h>530</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>240.0;509.0;240.0;505.0;70.0;505.0;70.0;15.0;10.0;15.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1980</x>
+      <y>940</y>
+      <w>580</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;19.0;550.0;19.0;550.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>940</x>
+      <y>1510</y>
+      <w>680</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;16.0;640.0;16.0;640.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>340</y>
+      <w>250</w>
+      <h>1060</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>110.0;10.0;110.0;152.0;230.0;152.0;230.0;322.0;110.0;322.0;110.0;722.0;10.0;722.0;10.0;1022.0;110.0;1022.0;110.0;1037.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>630</x>
+      <y>630</y>
+      <w>220</w>
+      <h>770</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;create&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;578.0;190.0;578.0;190.0;738.0;200.0;738.0;200.0;743.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2470</x>
+      <y>630</y>
+      <w>160</w>
+      <h>1110</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>110.0;1082.0;110.0;878.0;10.0;878.0;10.0;28.0;130.0;28.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1670</x>
+      <y>370</y>
+      <w>860</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;122.0;830.0;122.0;830.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>980</x>
+      <y>590</y>
+      <w>960</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>940.0;185.0;940.0;73.0;10.0;73.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>340</y>
+      <w>400</w>
+      <h>1060</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>360.0;10.0;360.0;152.0;230.0;152.0;230.0;322.0;110.0;322.0;110.0;722.0;10.0;722.0;10.0;1022.0;110.0;1022.0;110.0;1037.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2290</x>
+      <y>630</y>
+      <w>340</w>
+      <h>1110</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;1082.0;10.0;878.0;190.0;878.0;190.0;28.0;310.0;28.0;311.0;18.0;311.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>340</y>
+      <w>210</w>
+      <h>1400</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;create&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;32.0;140.0;32.0;140.0;1202.0;10.0;1202.0;10.0;1376.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1410</x>
+      <y>370</y>
+      <w>190</w>
+      <h>1370</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;create&gt;&gt;</panel_attributes>
+    <additional_attributes>170.0;10.0;170.0;112.0;10.0;112.0;10.0;1162.0;170.0;1162.0;170.0;1346.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2590</x>
+      <y>630</y>
+      <w>320</w>
+      <h>1110</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>280.0;1082.0;280.0;28.0;10.0;28.0;11.0;18.0;11.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1330</x>
+      <y>350</y>
+      <w>1200</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;17.0;20.0;17.0;20.0;47.0;350.0;47.0;350.0;137.0;1170.0;137.0;1170.0;155.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>630</y>
+      <w>2100</w>
+      <h>770</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>2060.0;10.0;2060.0;18.0;1490.0;18.0;1490.0;38.0;110.0;38.0;110.0;428.0;10.0;428.0;10.0;728.0;110.0;728.0;110.0;743.0</additional_attributes>
+  </element>
+</diagram>
