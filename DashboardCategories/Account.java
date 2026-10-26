@@ -15,11 +15,16 @@ public class Account {
         this.preferredContactMethod = preferredContactMethod; 
     }
 
+
+    /* Precondition: 2 inputs, password and passwordconfirmation
+    Postcondition: password match OR exception is thrown */
     public boolean passwordMatch(String password, String confirmationOfPassword) throws NonMatchingPasswordException {
-        if (password != confirmationOfPassword){
+        if (!password.equals(confirmationOfPassword)){
             throw new NonMatchingPasswordException("Passwords do not match. Please make sure that your passwords match."); 
-        } 
-        return true; 
+        } else {
+            return true; 
+        }
+        
     }
 
     public String getEmail() {
