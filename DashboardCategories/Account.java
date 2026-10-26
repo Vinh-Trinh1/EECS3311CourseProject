@@ -1,63 +1,46 @@
 package DashboardCategories;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 public class Account {
+    private final String accountId;
+    private final String ownerUserId;
+    private final String name;
+    private BigDecimal balance;
 
-    private String email; 
-    private String phoneNumber; 
-    private String password; 
-    private String confirmationOfPassword; 
-    private String preferredContactMethod; 
-    public Account(String email, String phoneNumber, String password, String confirmationOfPassword, String preferredContactMethod){
-        this.email = email; 
-        this.phoneNumber = phoneNumber; 
-        this.password = password; 
-        this.confirmationOfPassword = confirmationOfPassword; 
-        this.preferredContactMethod = preferredContactMethod; 
-    }
-
-
-    /* Precondition: 2 inputs, password and passwordconfirmation
-    Postcondition: password match OR exception is thrown */
-    public boolean passwordMatch(String password, String confirmationOfPassword) throws NonMatchingPasswordException {
-        if (!password.equals(confirmationOfPassword)){
-            throw new NonMatchingPasswordException("Passwords do not match. Please make sure that your passwords match."); 
-        } else {
-            return true; 
-        }
-        
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPreferredContactMethod() {
-        return preferredContactMethod;
-    }
-
-    public void setPreferredContactMethod(String preferredContactMethod) {
-        this.preferredContactMethod = preferredContactMethod;
+    public Account(String accountId, String ownerUserId, String name, BigDecimal balance) {
+        this.accountId = requireText(accountId, "Account ID");
+        this.ownerUserId = requireText(ownerUserId, "Owner user ID");
+        this.name = requireText(name, "Account name");
+        this.balance = Objects.requireNonNull(balance, "Balance is required.");
     }
 
     
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public String getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = Objects.requireNonNull(balance, "Balance is required.");
+    }
+
+    private static String requireText(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(fieldName + " is required.");
+        }
+        return value.trim();
+    }
 }
