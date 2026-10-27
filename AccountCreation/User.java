@@ -43,6 +43,10 @@ public class User{
         return password;
     }
 
+    public String getConfirmationOfPassword() {
+        return confirmationOfPassword;
+    }
+
 
     public String getPreferredContactMethod() {
         return preferredContactMethod;
