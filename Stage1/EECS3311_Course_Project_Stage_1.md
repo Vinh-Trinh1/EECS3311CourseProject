@@ -283,6 +283,10 @@ Summary
 |Adapter|F04, F06, F07, F08|ChatGPTAdapter|
 |Singleton|F01 to F10|DatabaseService|
 
+Implementation note: the current F04, F06, and F07 implementation uses OfflineChatGPT5
+behind ChatGPTAdapter and AIServiceProxy. It is a deterministic demo provider; it makes no
+external AI API calls and should not be treated as financial advice.
+
 
 
 ## Task 2.2: Use-Case Diagram 

@@ -24,7 +24,6 @@
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.3.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

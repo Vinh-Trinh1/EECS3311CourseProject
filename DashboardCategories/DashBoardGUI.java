@@ -54,6 +54,12 @@ public class DashBoardGUI extends JFrame {
         categoryButton.addActionListener(event -> saveCategory());
         JButton expenseButton = new JButton("Monthly expenses");
         expenseButton.addActionListener(event -> openExpenses());
+        JButton savingsButton = new JButton("Savings goals");
+        savingsButton.addActionListener(event -> openSavingsGoals());
+        JButton chatButton = new JButton("AI finance chat");
+        chatButton.addActionListener(event -> openChat());
+        JButton budgetButton = new JButton("Suggested budget");
+        budgetButton.addActionListener(event -> openBudget());
 
         JPanel dashboard = new JPanel(new BorderLayout(8, 12));
         dashboard.add(content, BorderLayout.NORTH);
@@ -62,6 +68,9 @@ public class DashBoardGUI extends JFrame {
         actions.add(categoryButton);
         actions.add(categoriesLabel);
         actions.add(expenseButton);
+        actions.add(savingsButton);
+        actions.add(chatButton);
+        actions.add(budgetButton);
         actions.add(balanceLabel);
         dashboard.add(actions, BorderLayout.SOUTH);
 
@@ -153,11 +162,70 @@ public class DashBoardGUI extends JFrame {
         }
         try {
             ExpenseController expenseController = new ExpenseController(
-                    DatabaseService.getInstance());
+                    DatabaseService.getInstance(),
+                    new ExpenseCategorizerAdapter(AIServiceFactory.createDefaultService()));
             new ExpenseGUI(expenseController, email).setVisible(true);
         } catch (SQLException exception) {
             showError("Could not open monthly expenses: " + exception.getMessage());
         }
+    }
+
+    private void openSavingsGoals() {
+        String email = requireAccountEmail("Enter an account email before managing savings goals.");
+        if (email == null) {
+            return;
+        }
+        try {
+            SavingsController savingsController =
+                    new SavingsController(DatabaseService.getInstance());
+            new SavingsGoalGUI(savingsController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open savings goals: " + exception.getMessage());
+        }
+    }
+
+    private void openChat() {
+        String email = requireAccountEmail("Enter an account email before opening the AI chat.");
+        if (email == null) {
+            return;
+        }
+        try {
+            DatabaseService databaseService = DatabaseService.getInstance();
+            AIController aiController = new AIController(
+                    new FinancialDataFacade(databaseService),
+                    AIServiceFactory.createDefaultService());
+            new ChatGUI(aiController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open the AI chat: " + exception.getMessage());
+        }
+    }
+
+    private void openBudget() {
+        String email = requireAccountEmail("Enter an account email before requesting a budget.");
+        if (email == null) {
+            return;
+        }
+        try {
+            DatabaseService databaseService = DatabaseService.getInstance();
+            AIService aiService = AIServiceFactory.createDefaultService();
+            BudgetController budgetController = new BudgetController(
+                    new FinancialDataFacade(databaseService),
+                    new BudgetAI(aiService),
+                    databaseService);
+            new BudgetGUI(budgetController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open budget recommendations: " + exception.getMessage());
+        }
+    }
+
+    private String requireAccountEmail(String message) {
+        String email = accountEmailField.getText().trim();
+        if (email.isEmpty()) {
+            showError(message);
+            accountEmailField.requestFocusInWindow();
+            return null;
+        }
+        return email;
     }
 
     private void showError(String message) {

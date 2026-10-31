@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -49,6 +50,34 @@ public class DatabaseService {
                             + "expense_date TEXT NOT NULL, "
                             + "description TEXT NOT NULL, "
                             + "category TEXT NOT NULL)");
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS savings_goals ("
+                            + "id TEXT PRIMARY KEY NOT NULL, "
+                            + "account_email TEXT NOT NULL COLLATE NOCASE, "
+                            + "name TEXT NOT NULL, "
+                            + "target_cents INTEGER NOT NULL CHECK (target_cents > 0), "
+                            + "current_cents INTEGER NOT NULL DEFAULT 0 "
+                            + "CHECK (current_cents >= 0), "
+                            + "timeframe_months INTEGER NOT NULL "
+                            + "CHECK (timeframe_months > 0), "
+                            + "linked_account_id TEXT NOT NULL, "
+                            + "linked_account_name TEXT NOT NULL, "
+                            + "linked_account_balance_cents INTEGER NOT NULL)");
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS budgets ("
+                            + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                            + "account_email TEXT NOT NULL COLLATE NOCASE, "
+                            + "period TEXT NOT NULL CHECK (period IN ('weekly', 'monthly')), "
+                            + "recommendation TEXT NOT NULL, "
+                            + "generated_at TEXT NOT NULL, "
+                            + "UNIQUE (account_email, period))");
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS budget_lines ("
+                            + "budget_id INTEGER NOT NULL REFERENCES budgets(id) ON DELETE CASCADE, "
+                            + "category TEXT NOT NULL, "
+                            + "amount_cents INTEGER NOT NULL CHECK (amount_cents >= 0), "
+                            + "PRIMARY KEY (budget_id, category))");
+            statement.executeUpdate("PRAGMA foreign_keys = ON");
         }
     }
 
@@ -138,7 +167,21 @@ public class DatabaseService {
 
     public Map<String, BigDecimal> getMonthlyExpenseTotals(
             String accountEmail, YearMonth month) throws SQLException {
+        return getExpenseTotalsBetween(
+                accountEmail, month.atDay(1), month.plusMonths(1).atDay(1));
+    }
+
+    public Map<String, BigDecimal> getExpenseTotalsBetween(
+            String accountEmail, LocalDate startInclusive, LocalDate endExclusive)
+            throws SQLException {
         Map<String, BigDecimal> totals = new LinkedHashMap<>();
+        if (accountEmail == null || accountEmail.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account email is required.");
+        }
+        if (startInclusive == null || endExclusive == null
+                || !startInclusive.isBefore(endExclusive)) {
+            throw new IllegalArgumentException("Expense date range is invalid.");
+        }
         String sql = "SELECT category, SUM(amount_cents) AS total_cents "
                 + "FROM monthly_expenses "
                 + "WHERE account_email = ? COLLATE NOCASE "
@@ -146,8 +189,8 @@ public class DatabaseService {
                 + "GROUP BY category ORDER BY category COLLATE NOCASE";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, accountEmail.trim());
-            statement.setString(2, month.atDay(1).toString());
-            statement.setString(3, month.plusMonths(1).atDay(1).toString());
+            statement.setString(2, startInclusive.toString());
+            statement.setString(3, endExclusive.toString());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     totals.put(
@@ -157,6 +200,187 @@ public class DatabaseService {
             }
         }
         return totals;
+    }
+
+    public BigDecimal getAccountBalance(String accountEmail) throws SQLException {
+        if (accountEmail == null || accountEmail.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account email is required.");
+        }
+        String sql = "SELECT balance_cents FROM account_balances "
+                + "WHERE account_email = ? COLLATE NOCASE";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, accountEmail.trim());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next()
+                        ? BigDecimal.valueOf(resultSet.getLong("balance_cents"), 2)
+                        : BigDecimal.ZERO.setScale(2);
+            }
+        }
+    }
+
+    public void saveSavingsGoal(String accountEmail, SavingsGoal goal) throws SQLException {
+        String sql = "INSERT INTO savings_goals "
+                + "(id, account_email, name, target_cents, current_cents, timeframe_months, "
+                + "linked_account_id, linked_account_name, linked_account_balance_cents) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, goal.getId());
+            statement.setString(2, requireAccountEmail(accountEmail));
+            statement.setString(3, goal.getName());
+            statement.setLong(4, toCents(goal.getTargetAmount()));
+            statement.setLong(5, toCents(goal.getCurrentAmount()));
+            statement.setInt(6, goal.getTimeframeMonths());
+            statement.setString(7, goal.getLinkedAccount().getAccountId());
+            statement.setString(8, goal.getLinkedAccount().getName());
+            statement.setLong(9, toCents(goal.getLinkedAccount().getBalance()));
+            statement.executeUpdate();
+        }
+    }
+
+    public List<SavingsGoal> getSavingsGoals(String accountEmail) throws SQLException {
+        List<SavingsGoal> goals = new ArrayList<>();
+        String sql = "SELECT id, name, target_cents, current_cents, timeframe_months, "
+                + "linked_account_id, linked_account_name, linked_account_balance_cents "
+                + "FROM savings_goals WHERE account_email = ? COLLATE NOCASE "
+                + "ORDER BY name COLLATE NOCASE";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, requireAccountEmail(accountEmail));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Account linkedAccount = new Account(
+                            resultSet.getString("linked_account_id"),
+                            accountEmail.trim(),
+                            resultSet.getString("linked_account_name"),
+                            BigDecimal.valueOf(
+                                    resultSet.getLong("linked_account_balance_cents"), 2));
+                    goals.add(new SavingsGoal(
+                            resultSet.getString("id"),
+                            resultSet.getString("name"),
+                            BigDecimal.valueOf(resultSet.getLong("target_cents"), 2),
+                            BigDecimal.valueOf(resultSet.getLong("current_cents"), 2),
+                            resultSet.getInt("timeframe_months"),
+                            linkedAccount));
+                }
+            }
+        }
+        return goals;
+    }
+
+    public void updateSavingsGoalProgress(
+            String accountEmail, String goalId, BigDecimal currentAmount) throws SQLException {
+        String sql = "UPDATE savings_goals SET current_cents = ? "
+                + "WHERE account_email = ? COLLATE NOCASE AND id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, toCents(currentAmount));
+            statement.setString(2, requireAccountEmail(accountEmail));
+            statement.setString(3, goalId);
+            if (statement.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Savings goal was not found.");
+            }
+        }
+    }
+
+    public void saveBudget(Budget budget) throws SQLException {
+        String upsert = "INSERT INTO budgets "
+                + "(account_email, period, recommendation, generated_at) VALUES (?, ?, ?, ?) "
+                + "ON CONFLICT(account_email, period) DO UPDATE SET "
+                + "recommendation = excluded.recommendation, "
+                + "generated_at = excluded.generated_at";
+        String findId = "SELECT id FROM budgets WHERE account_email = ? COLLATE NOCASE "
+                + "AND period = ?";
+        String clearLines = "DELETE FROM budget_lines WHERE budget_id = ?";
+        String insertLine = "INSERT INTO budget_lines (budget_id, category, amount_cents) "
+                + "VALUES (?, ?, ?)";
+        boolean previousAutoCommit = connection.getAutoCommit();
+        connection.setAutoCommit(false);
+        try {
+            try (PreparedStatement statement = connection.prepareStatement(upsert)) {
+                statement.setString(1, budget.getAccountEmail());
+                statement.setString(2, budget.getPeriod().getValue());
+                statement.setString(3, budget.getRecommendation());
+                statement.setString(4, budget.getGeneratedAt().toString());
+                statement.executeUpdate();
+            }
+            long budgetId;
+            try (PreparedStatement statement = connection.prepareStatement(findId)) {
+                statement.setString(1, budget.getAccountEmail());
+                statement.setString(2, budget.getPeriod().getValue());
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (!resultSet.next()) {
+                        throw new SQLException("The saved budget could not be retrieved.");
+                    }
+                    budgetId = resultSet.getLong("id");
+                }
+            }
+            try (PreparedStatement statement = connection.prepareStatement(clearLines)) {
+                statement.setLong(1, budgetId);
+                statement.executeUpdate();
+            }
+            try (PreparedStatement statement = connection.prepareStatement(insertLine)) {
+                for (Map.Entry<String, BigDecimal> entry : budget.getCategoryAmounts().entrySet()) {
+                    statement.setLong(1, budgetId);
+                    statement.setString(2, entry.getKey());
+                    statement.setLong(3, toCents(entry.getValue()));
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+            }
+            connection.commit();
+        } catch (SQLException | RuntimeException exception) {
+            connection.rollback();
+            throw exception;
+        } finally {
+            connection.setAutoCommit(previousAutoCommit);
+        }
+    }
+
+    public Budget getBudget(String accountEmail, BudgetPeriod period) throws SQLException {
+        String sql = "SELECT id, recommendation, generated_at FROM budgets "
+                + "WHERE account_email = ? COLLATE NOCASE AND period = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, requireAccountEmail(accountEmail));
+            statement.setString(2, period.getValue());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+                long budgetId = resultSet.getLong("id");
+                Map<String, BigDecimal> amounts = new LinkedHashMap<>();
+                try (PreparedStatement lines = connection.prepareStatement(
+                        "SELECT category, amount_cents FROM budget_lines "
+                                + "WHERE budget_id = ? ORDER BY category COLLATE NOCASE")) {
+                    lines.setLong(1, budgetId);
+                    try (ResultSet lineResults = lines.executeQuery()) {
+                        while (lineResults.next()) {
+                            amounts.put(
+                                    lineResults.getString("category"),
+                                    BigDecimal.valueOf(lineResults.getLong("amount_cents"), 2));
+                        }
+                    }
+                }
+                return new Budget(
+                        accountEmail.trim(),
+                        period,
+                        amounts,
+                        resultSet.getString("recommendation"),
+                        java.time.LocalDateTime.parse(resultSet.getString("generated_at")));
+            }
+        }
+    }
+
+    private static String requireAccountEmail(String accountEmail) {
+        if (accountEmail == null || accountEmail.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account email is required.");
+        }
+        return accountEmail.trim();
+    }
+
+    private static long toCents(BigDecimal amount) {
+        if (amount == null || amount.signum() < 0) {
+            throw new IllegalArgumentException("Amount must be zero or greater.");
+        }
+        return amount.setScale(2, java.math.RoundingMode.UNNECESSARY)
+                .movePointRight(2).longValueExact();
     }
 
     public void createUser(
