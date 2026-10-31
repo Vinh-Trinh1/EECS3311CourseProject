@@ -1,4 +1,4 @@
-package DashboardCategories;
+package SavingsGoals;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;

@@ -1,5 +1,6 @@
-package DashboardCategories;
+package SavingsGoals;
 
+import DashboardCategories.Account;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -12,7 +13,7 @@ public class SavingsGoal {
     private final int timeframeMonths;
     private final Account linkedAccount;
 
-    SavingsGoal(
+    public SavingsGoal(
             String id,
             String name,
             BigDecimal targetAmount,

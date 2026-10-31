@@ -1,5 +1,7 @@
-package DashboardCategories;
+package Budgeting;
 
+import AIIntegration.AIService;
+import FinancialData.FinancialData;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

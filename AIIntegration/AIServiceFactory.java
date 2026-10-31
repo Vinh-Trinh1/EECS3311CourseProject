@@ -1,4 +1,4 @@
-package DashboardCategories;
+package AIIntegration;
 
 public final class AIServiceFactory {
     private AIServiceFactory() {

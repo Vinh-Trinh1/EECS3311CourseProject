@@ -1,5 +1,6 @@
-package DashboardCategories;
+package AIChat;
 
+import AIIntegration.AIService;
 import java.io.IOException;
 import java.util.Objects;
 

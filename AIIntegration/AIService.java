@@ -1,4 +1,4 @@
-package DashboardCategories;
+package AIIntegration;
 
 import java.io.IOException;
 

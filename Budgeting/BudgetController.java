@@ -1,5 +1,8 @@
-package DashboardCategories;
+package Budgeting;
 
+import DashboardCategories.DatabaseService;
+import FinancialData.FinancialData;
+import FinancialData.FinancialDataFacade;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;

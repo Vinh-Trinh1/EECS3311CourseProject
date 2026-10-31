@@ -1,5 +1,8 @@
 package DashboardCategories;
 
+import Budgeting.Budget;
+import Budgeting.BudgetPeriod;
+import SavingsGoals.SavingsGoal;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;

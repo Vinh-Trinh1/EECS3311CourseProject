@@ -1,4 +1,4 @@
-package DashboardCategories;
+package AIChat;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

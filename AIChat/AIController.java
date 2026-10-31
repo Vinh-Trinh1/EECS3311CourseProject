@@ -1,5 +1,7 @@
-package DashboardCategories;
+package AIChat;
 
+import AIIntegration.AIService;
+import FinancialData.FinancialDataFacade;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;

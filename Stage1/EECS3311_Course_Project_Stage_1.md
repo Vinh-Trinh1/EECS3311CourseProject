@@ -287,6 +287,11 @@ Implementation note: the current F04, F06, and F07 implementation uses OfflineCh
 behind ChatGPTAdapter and AIServiceProxy. It is a deterministic demo provider; it makes no
 external AI API calls and should not be treated as financial advice.
 
+Source packages group related features: AccountCreation contains F01; DashboardCategories
+contains dashboard and expense features; SavingsGoals contains F05; AIChat contains F06;
+Budgeting contains F07; AIIntegration and FinancialData contain shared AI and financial-data
+services. FeatureIntegration contains tests spanning multiple features.
+
 
 
 ## Task 2.2: Use-Case Diagram 

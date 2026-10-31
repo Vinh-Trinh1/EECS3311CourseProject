@@ -1,4 +1,4 @@
-package DashboardCategories;
+package AIChat;
 
 import java.sql.SQLException;
 import java.util.LinkedHashMap;

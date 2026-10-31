@@ -1,5 +1,15 @@
 package DashboardCategories;
 
+import AIChat.AIController;
+import AIChat.ChatGUI;
+import AIIntegration.AIService;
+import AIIntegration.AIServiceFactory;
+import Budgeting.BudgetAI;
+import Budgeting.BudgetController;
+import Budgeting.BudgetGUI;
+import FinancialData.FinancialDataFacade;
+import SavingsGoals.SavingsController;
+import SavingsGoals.SavingsGoalGUI;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;

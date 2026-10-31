@@ -1,4 +1,4 @@
-package DashboardCategories;
+package Budgeting;
 
 public enum BudgetPeriod {
     WEEKLY("weekly"),

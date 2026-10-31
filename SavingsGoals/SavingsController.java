@@ -1,5 +1,7 @@
-package DashboardCategories;
+package SavingsGoals;
 
+import DashboardCategories.Account;
+import DashboardCategories.DatabaseService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;

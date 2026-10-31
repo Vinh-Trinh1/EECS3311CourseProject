@@ -1,4 +1,9 @@
-package DashboardCategories;
+package FinancialData;
+
+import Budgeting.Budget;
+import Budgeting.BudgetPeriod;
+import DashboardCategories.DatabaseService;
+import SavingsGoals.SavingsGoal;
 
 import java.sql.SQLException;
 import java.time.LocalDate;

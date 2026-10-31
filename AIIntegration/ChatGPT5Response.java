@@ -1,4 +1,4 @@
-package DashboardCategories;
+package AIIntegration;
 
 public class ChatGPT5Response {
     private final String content;

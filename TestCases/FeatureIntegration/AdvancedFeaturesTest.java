@@ -1,5 +1,23 @@
-package DashboardCategories;
+package FeatureIntegration;
 
+import AIChat.AIController;
+import AIIntegration.AIService;
+import AIIntegration.AIServiceFactory;
+import AIIntegration.AIServiceProxy;
+import AIIntegration.ChatGPT5Response;
+import AIIntegration.ChatGPTAdapter;
+import Budgeting.Budget;
+import Budgeting.BudgetAI;
+import Budgeting.BudgetController;
+import Budgeting.BudgetPeriod;
+import DashboardCategories.DatabaseService;
+import DashboardCategories.Expense;
+import DashboardCategories.ExpenseCategorizerAdapter;
+import DashboardCategories.ExpenseController;
+import FinancialData.FinancialDataFacade;
+import SavingsGoals.SavingsController;
+import SavingsGoals.SavingsGoal;
+import SavingsGoals.SavingsGoalBuilder;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;

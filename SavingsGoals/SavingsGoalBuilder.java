@@ -1,5 +1,6 @@
-package DashboardCategories;
+package SavingsGoals;
 
+import DashboardCategories.Account;
 import java.math.BigDecimal;
 import java.util.UUID;
 
