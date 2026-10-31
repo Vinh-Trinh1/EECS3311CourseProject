@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,8 +19,11 @@ public class DashBoardGUI extends JFrame {
     private final DashboardController controller;
     private final JTextField accountEmailField = new JTextField(24);
     private final JTextField balanceField = new JTextField(12);
+    private final JTextField categoryNameField = new JTextField(12);
+    private final JTextField categoryBalanceField = new JTextField(12);
     private final JLabel balanceLabel = new JLabel("Current balance: Not saved");
     private final JLabel statusLabel = new JLabel(" ");
+    private final JLabel categoriesLabel = new JLabel("Categories: None");
 
     public DashBoardGUI(DashboardController controller) {
         super("Finance Dashboard");
@@ -40,11 +44,30 @@ public class DashBoardGUI extends JFrame {
         JPanel content = new JPanel(new BorderLayout(8, 12));
         content.add(form, BorderLayout.NORTH);
         content.add(saveButton, BorderLayout.CENTER);
-        content.add(balanceLabel, BorderLayout.SOUTH);
 
-        add(content, BorderLayout.CENTER);
+        JPanel categoryForm = new JPanel(new GridLayout(0, 2, 8, 8));
+        categoryForm.add(new JLabel("Category name:"));
+        categoryForm.add(categoryNameField);
+        categoryForm.add(new JLabel("Category balance:"));
+        categoryForm.add(categoryBalanceField);
+        JButton categoryButton = new JButton("Add / update category");
+        categoryButton.addActionListener(event -> saveCategory());
+        JButton expenseButton = new JButton("Monthly expenses");
+        expenseButton.addActionListener(event -> openExpenses());
+
+        JPanel dashboard = new JPanel(new BorderLayout(8, 12));
+        dashboard.add(content, BorderLayout.NORTH);
+        dashboard.add(categoryForm, BorderLayout.CENTER);
+        JPanel actions = new JPanel(new GridLayout(0, 1, 4, 4));
+        actions.add(categoryButton);
+        actions.add(categoriesLabel);
+        actions.add(expenseButton);
+        actions.add(balanceLabel);
+        dashboard.add(actions, BorderLayout.SOUTH);
+
+        add(dashboard, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
-        setSize(420, 190);
+        setSize(520, 380);
         setLocationRelativeTo(null);
     }
 
@@ -78,10 +101,69 @@ public class DashBoardGUI extends JFrame {
         balanceLabel.setText("Current balance: $" + balance.toPlainString());
     }
 
+    private void saveCategory() {
+        String email = accountEmailField.getText().trim();
+        final BigDecimal balance;
+        try {
+            balance = new BigDecimal(categoryBalanceField.getText().trim());
+            controller.createCategory(email, categoryNameField.getText(), balance);
+        } catch (NumberFormatException exception) {
+            showError("Enter a valid category balance, for example -25.50.");
+            categoryBalanceField.requestFocusInWindow();
+            return;
+        } catch (IllegalArgumentException | SQLException exception) {
+            showError(exception.getMessage());
+            return;
+        }
+
+        try {
+            refreshCategories(email);
+            statusLabel.setText("Category saved.");
+        } catch (SQLException exception) {
+            showError("Category was saved, but the category list could not be refreshed: "
+                    + exception.getMessage());
+        }
+    }
+
+    private void refreshCategories(String email) throws SQLException {
+        List<Category> categories = controller.getCategories(email);
+        if (categories.isEmpty()) {
+            categoriesLabel.setText("Categories: None");
+            return;
+        }
+        StringBuilder text = new StringBuilder("Categories: ");
+        for (int index = 0; index < categories.size(); index++) {
+            if (index > 0) {
+                text.append(", ");
+            }
+            Category category = categories.get(index);
+            text.append(category.getName())
+                    .append(" $")
+                    .append(category.getBalance().setScale(2).toPlainString());
+        }
+        categoriesLabel.setText(text.toString());
+    }
+
+    private void openExpenses() {
+        String email = accountEmailField.getText().trim();
+        if (email.isEmpty()) {
+            showError("Enter an account email before recording expenses.");
+            accountEmailField.requestFocusInWindow();
+            return;
+        }
+        try {
+            ExpenseController expenseController = new ExpenseController(
+                    DatabaseService.getInstance());
+            new ExpenseGUI(expenseController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open monthly expenses: " + exception.getMessage());
+        }
+    }
+
     private void showError(String message) {
-        statusLabel.setText("Could not save balance.");
+        statusLabel.setText("Request failed.");
         JOptionPane.showMessageDialog(
-                this, message, "Unable to save balance", JOptionPane.ERROR_MESSAGE);
+                this, message, "Unable to complete request", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {
