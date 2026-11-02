@@ -1,9 +1,15 @@
 package AccountCreation;
 
 import DashboardCategories.DatabaseService;
+import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +72,104 @@ public class AccountControllerTest {
         }
     }
 
+    @Test
+    public void loginCodeIsDeliveredToVerifiedAccountAndAcceptsPhoneIdentifier()
+            throws Exception {
+        controller.createAccount(createUser("correct horse"));
+        AtomicReference<String> deliveredCode = new AtomicReference<>();
+        TwoFactorService twoFactor = new TwoFactorAuthenticationProxy(
+                new TwoFactorAuthentication(
+                        (recipient, code) -> {
+                            assertTrue(recipient.equalsIgnoreCase(email));
+                            deliveredCode.set(code);
+                        },
+                        Clock.systemUTC(),
+                        new SecureRandom()));
+        AccountController twoFactorController =
+                new AccountController(databaseService, twoFactor);
+
+        assertTrue(email.equalsIgnoreCase(twoFactorController.requestLoginCode(
+                phoneNumber, "correct horse".toCharArray())));
+        assertTrue(deliveredCode.get().matches("\\d{6}"));
+        assertTrue(twoFactorController.verifyLoginCode(phoneNumber, deliveredCode.get()));
+        assertFalse(twoFactorController.verifyLoginCode(phoneNumber, deliveredCode.get()));
+    }
+
+    @Test
+    public void verificationCodeExpiresAndProxyLocksAfterThreeFailures() throws Exception {
+        MutableClock clock = new MutableClock();
+        AtomicReference<String> deliveredCode = new AtomicReference<>();
+        TwoFactorAuthentication authentication = new TwoFactorAuthentication(
+                (recipient, code) -> deliveredCode.set(code), clock, new SecureRandom());
+        authentication.requestCode(email);
+        assertTrue(authentication.verifyCode(email, deliveredCode.get()));
+        assertFalse(authentication.verifyCode(email, deliveredCode.get()));
+
+        authentication.requestCode(email);
+        clock.advanceMillis(6 * 60 * 1000L);
+        assertFalse(authentication.verifyCode(email, deliveredCode.get()));
+
+        TwoFactorService alwaysReject = new TwoFactorService() {
+            @Override
+            public void requestCode(String recipient) {
+            }
+
+            @Override
+            public boolean verifyCode(String recipient, String code) {
+                return false;
+            }
+        };
+        TwoFactorAuthenticationProxy proxy = new TwoFactorAuthenticationProxy(alwaysReject, clock);
+        assertFalse(proxy.verifyCode(email, "000000"));
+        assertFalse(proxy.verifyCode(email, "000000"));
+        try {
+            proxy.verifyCode(email, "000000");
+            fail("Expected the third invalid code to lock verification.");
+        } catch (IllegalStateException expected) {
+            assertTrue(expected.getMessage().contains("15 minutes"));
+        }
+        try {
+            proxy.requestCode(email);
+            fail("Expected code requests to be blocked during lockout.");
+        } catch (IllegalStateException expected) {
+            assertTrue(expected.getMessage().contains("locked"));
+        }
+    }
+
+    @Test
+    public void knockDeliveryRequiresEnvironmentConfiguration() throws Exception {
+        try {
+            new KnockEmailCodeDelivery("", "").deliver(email, "123456");
+            fail("Expected missing Knock configuration to block delivery.");
+        } catch (IllegalStateException expected) {
+            assertTrue(expected.getMessage().contains("KNOCK_API_KEY"));
+        }
+    }
+
     private User createUser(String password) {
         return new User(email, phoneNumber, password, password, "email");
+    }
+
+    private static final class MutableClock extends Clock {
+        private Instant instant = Instant.parse("2026-01-01T00:00:00Z");
+
+        private void advanceMillis(long milliseconds) {
+            instant = instant.plusMillis(milliseconds);
+        }
+
+        @Override
+        public ZoneId getZone() {
+            return ZoneOffset.UTC;
+        }
+
+        @Override
+        public Clock withZone(ZoneId zone) {
+            return this;
+        }
+
+        @Override
+        public Instant instant() {
+            return instant;
+        }
     }
 }

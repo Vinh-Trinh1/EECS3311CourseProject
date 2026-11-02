@@ -416,4 +416,20 @@ public class DatabaseService {
             }
         }
     }
+
+    public String findUserEmail(String identifier) throws SQLException {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email or phone number is required.");
+        }
+
+        String sql = identifier.contains("@")
+                ? "SELECT email FROM account_users WHERE email = ? COLLATE NOCASE"
+                : "SELECT email FROM account_users WHERE phone_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, identifier.trim());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getString("email") : null;
+            }
+        }
+    }
 }

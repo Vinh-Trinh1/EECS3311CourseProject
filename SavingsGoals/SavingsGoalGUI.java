@@ -2,6 +2,7 @@ package SavingsGoals;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class SavingsGoalGUI extends JFrame {
@@ -25,6 +28,8 @@ public class SavingsGoalGUI extends JFrame {
     private final JTextField linkedAccountField = new JTextField("Primary", 12);
     private final JTextField contributionField = new JTextField(10);
     private final JComboBox<SavingsGoal> goalsField = new JComboBox<>();
+    private final JTextField recommendationField = new JTextField(32);
+    private final JTextArea recommendationArea = new JTextArea(5, 32);
     private final JLabel statusLabel = new JLabel(" ");
 
     public SavingsGoalGUI(SavingsController controller, String accountEmail)
@@ -52,6 +57,16 @@ public class SavingsGoalGUI extends JFrame {
         progress.add(goalsField);
         progress.add(new JLabel("Contribution:"));
         progress.add(contributionField);
+        JButton recommendationButton = new JButton("Savings recommendation");
+        recommendationButton.addActionListener(event -> requestRecommendation());
+        recommendationField.setEditable(false);
+        recommendationArea.setEditable(false);
+        recommendationArea.setLineWrap(true);
+        recommendationArea.setWrapStyleWord(true);
+        progress.add(recommendationButton);
+        progress.add(recommendationField);
+        progress.add(new JLabel("AI advice:"));
+        progress.add(new JScrollPane(recommendationArea));
         JButton contributeButton = new JButton("Add contribution");
         contributeButton.addActionListener(event -> addContribution());
 
@@ -65,7 +80,7 @@ public class SavingsGoalGUI extends JFrame {
         add(content, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(440, 300);
+        setSize(500, 400);
         setLocationRelativeTo(null);
         refreshGoals();
     }
@@ -106,6 +121,24 @@ public class SavingsGoalGUI extends JFrame {
         } catch (NumberFormatException exception) {
             showError("Enter a valid contribution amount.");
         } catch (IllegalArgumentException | SQLException exception) {
+            showError(exception.getMessage());
+        }
+    }
+
+    private void requestRecommendation() {
+        SavingsGoal goal = (SavingsGoal) goalsField.getSelectedItem();
+        if (goal == null) {
+            showError("Create or select a savings goal first.");
+            return;
+        }
+        try {
+            SavingsRecommendation recommendation =
+                    controller.generateSavingsRecommendation(accountEmail, goal.getId());
+            recommendationField.setText("$" + recommendation.getMonthlyTarget().toPlainString()
+                    + " per month");
+            recommendationArea.setText(recommendation.getAdvice());
+            statusLabel.setText("Recommendation generated.");
+        } catch (IllegalArgumentException | IOException | SQLException exception) {
             showError(exception.getMessage());
         }
     }

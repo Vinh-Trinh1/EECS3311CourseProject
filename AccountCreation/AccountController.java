@@ -14,12 +14,23 @@ public class AccountController {
             Pattern.compile("^[+()0-9 .-]{7,20}$");
 
     private final DatabaseService databaseService;
+    private final TwoFactorService twoFactorService;
 
     public AccountController(DatabaseService databaseService) {
+        this(databaseService, new TwoFactorAuthenticationProxy(
+                new TwoFactorAuthentication(new KnockEmailCodeDelivery())));
+    }
+
+    public AccountController(
+            DatabaseService databaseService, TwoFactorService twoFactorService) {
         if (databaseService == null) {
             throw new IllegalArgumentException("Database service is required.");
         }
+        if (twoFactorService == null) {
+            throw new IllegalArgumentException("Two-factor service is required.");
+        }
         this.databaseService = databaseService;
+        this.twoFactorService = twoFactorService;
     }
 
     public void createAccount(User user) throws SQLException {
@@ -53,6 +64,27 @@ public class AccountController {
 
         String passwordHash = databaseService.findUserPasswordHash(identifier.trim());
         return passwordHash != null && PasswordHasher.verify(password, passwordHash);
+    }
+
+    public String requestLoginCode(String identifier, char[] password)
+            throws SQLException, java.io.IOException {
+        if (!verifyCredentials(identifier, password)) {
+            return null;
+        }
+        String email = databaseService.findUserEmail(identifier.trim());
+        if (email == null) {
+            return null;
+        }
+        twoFactorService.requestCode(email);
+        return email;
+    }
+
+    public boolean verifyLoginCode(String identifier, String code) throws SQLException {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email or phone number is required.");
+        }
+        String email = databaseService.findUserEmail(identifier.trim());
+        return email != null && twoFactorService.verifyCode(email, code);
     }
 
     private void validateAccount(User user) {

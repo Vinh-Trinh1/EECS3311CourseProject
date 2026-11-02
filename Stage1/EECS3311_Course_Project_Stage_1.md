@@ -1672,6 +1672,8 @@ Related Sequence Diagram: SD3 - Savings Goal and Savings Recommendation
 
 The user selects a goal and requests a recommendation. SavingsController retrieves target amounts and current income/expenses using FinancialDataFacade. SavingsAI calculates the weekly/monthly saving target (calculateMonthlyTarget()) and sends the request to ChatGPT 5 through AIServiceProxy. The recommendation and actionable feedback are returned to SavingsGoalGUI. 
 
+The implementation calculates the monthly target from the remaining goal amount and timeframe, rounding up to the nearest cent. SavingsAI uses the existing AIService and AgentMemory abstractions to explain the target using recorded financial data; it does not treat the account balance as income or disposable cash.
+
 ## F09 - Budget vs Actual Spent 
 
 Related Use Case: UC10 - Compare Budget vs Actual Spending 
@@ -1747,6 +1749,8 @@ Related Use Case: UC11 - Verify Two-Factor Authentication Related Sequence Diagr
 ## Execution 
 
 Upon credential verification via AuthenticationService, TwoFactorAuthenticationProxy intercepts system routing and triggers code generation via TwoFactorAuthentication. EmailSMSService sends a 6-digit passcode to the user. TwoFactorAuthenticationProxy evaluates user input, enforcing attempt thresholds and expiration timeouts before permitting navigation to the main application dashboard 
+
+The implemented email delivery uses Knock. Configure `KNOCK_API_KEY` and `KNOCK_2FA_WORKFLOW_KEY` in the process environment, and configure that Knock workflow with an email step that includes `{{ data.code }}`. The recipient is the verified account email. Codes expire after five minutes, are single-use, and three failed attempts cause a 15-minute lockout. Missing Knock configuration or delivery failure prevents sign-in; credentials are not stored in source code.
 
 Task 2.1: Class Diagram - AI Personal Finance Assistant 
 

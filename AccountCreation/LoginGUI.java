@@ -2,7 +2,10 @@
 package AccountCreation;
 
 import DashboardCategories.DatabaseService;
+import DashboardCategories.DashBoardGUI;
+import DashboardCategories.DashboardController;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +24,7 @@ public class LoginGUI extends JFrame {
     private final AccountController controller;
     private final JTextField loginIdentifierField = new JTextField(22);
     private final JPasswordField loginPasswordField = new JPasswordField(22);
+    private final JTextField verificationCodeField = new JTextField(22);
     private final JTextField emailField = new JTextField(22);
     private final JTextField phoneField = new JTextField(22);
     private final JPasswordField createPasswordField = new JPasswordField(22);
@@ -40,7 +44,7 @@ public class LoginGUI extends JFrame {
         tabs.addTab("Log in", createLoginPanel());
         tabs.addTab("Create account", createAccountPanel());
         add(tabs);
-        setSize(380, 250);
+        setSize(400, 310);
         setLocationRelativeTo(null);
     }
 
@@ -55,6 +59,12 @@ public class LoginGUI extends JFrame {
         loginButton.addActionListener(event -> logIn());
         panel.add(new JLabel());
         panel.add(loginButton);
+        panel.add(new JLabel("Email verification code:"));
+        panel.add(verificationCodeField);
+        JButton verifyButton = new JButton("Verify and continue");
+        verifyButton.addActionListener(event -> verifyCode());
+        panel.add(new JLabel());
+        panel.add(verifyButton);
         return panel;
     }
 
@@ -81,22 +91,44 @@ public class LoginGUI extends JFrame {
     private void logIn() {
         char[] password = loginPasswordField.getPassword();
         try {
-            if (!controller.verifyCredentials(loginIdentifierField.getText(), password)) {
+            String email = controller.requestLoginCode(loginIdentifierField.getText(), password);
+            if (email == null) {
                 showError("Email, phone number, or password is incorrect.");
                 return;
             }
             JOptionPane.showMessageDialog(
                     this,
-                    "Password verified. Two-factor authentication is not configured, "
-                            + "so access cannot continue.",
-                    "Two-factor authentication unavailable",
+                    "A verification code was sent to " + email + ".",
+                    "Check your email",
                     JOptionPane.INFORMATION_MESSAGE);
-        } catch (IllegalArgumentException | SQLException exception) {
+        } catch (IllegalArgumentException | IllegalStateException
+                | SQLException | IOException exception) {
             showError(exception.getMessage());
         } finally {
             java.util.Arrays.fill(password, '\0');
             loginPasswordField.setText("");
         }
+    }
+
+    private void verifyCode() {
+        try {
+            if (!controller.verifyLoginCode(
+                    loginIdentifierField.getText(), verificationCodeField.getText().trim())) {
+                showError("The verification code is incorrect or has expired.");
+                return;
+            }
+            DatabaseService databaseService = DatabaseService.getInstance();
+            DashBoardGUI dashboard = new DashBoardGUI(
+                    new DashboardController(databaseService), resolveAccountEmail());
+            dashboard.setVisible(true);
+            dispose();
+        } catch (IllegalArgumentException | IllegalStateException | SQLException exception) {
+            showError(exception.getMessage());
+        }
+    }
+
+    private String resolveAccountEmail() throws SQLException {
+        return DatabaseService.getInstance().findUserEmail(loginIdentifierField.getText().trim());
     }
 
     private void createAccount() {

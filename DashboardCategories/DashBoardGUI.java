@@ -4,6 +4,7 @@ import AIChat.AIController;
 import AIChat.ChatGUI;
 import AIIntegration.AIService;
 import AIIntegration.AIServiceFactory;
+import AccountCreation.LoginGUI;
 import Budgeting.BudgetAI;
 import Budgeting.BudgetController;
 import Budgeting.BudgetGUI;
@@ -36,8 +37,22 @@ public class DashBoardGUI extends JFrame {
     private final JLabel categoriesLabel = new JLabel("Categories: None");
 
     public DashBoardGUI(DashboardController controller) {
+        this(controller, null);
+    }
+
+    public DashBoardGUI(DashboardController controller, String signedInEmail) {
         super("Finance Dashboard");
+        if (controller == null) {
+            throw new IllegalArgumentException("Dashboard controller is required.");
+        }
         this.controller = controller;
+        if (signedInEmail != null) {
+            if (signedInEmail.trim().isEmpty()) {
+                throw new IllegalArgumentException("Signed-in email is required.");
+            }
+            accountEmailField.setText(signedInEmail.trim());
+            accountEmailField.setEditable(false);
+        }
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(12, 12));
@@ -245,18 +260,6 @@ public class DashBoardGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                DatabaseService databaseService = DatabaseService.getInstance();
-                DashboardController controller = new DashboardController(databaseService);
-                new DashBoardGUI(controller).setVisible(true);
-            } catch (SQLException exception) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Could not connect to the SQLite database: " + exception.getMessage(),
-                        "Database error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        LoginGUI.main(args);
     }
 }

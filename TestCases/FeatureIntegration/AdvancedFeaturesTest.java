@@ -18,6 +18,7 @@ import FinancialData.FinancialDataFacade;
 import SavingsGoals.SavingsController;
 import SavingsGoals.SavingsGoal;
 import SavingsGoals.SavingsGoalBuilder;
+import SavingsGoals.SavingsRecommendation;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -64,7 +65,7 @@ public class AdvancedFeaturesTest {
 
     @Test
     public void savingsGoalsAreBuiltLinkedPersistedAndTrackContributions()
-            throws SQLException {
+            throws SQLException, IOException {
         SavingsController controller = new SavingsController(databaseService);
         SavingsGoal goal = controller.createGoal(
                 accountEmail, "Emergency fund", new BigDecimal("1000.00"),
@@ -78,6 +79,11 @@ public class AdvancedFeaturesTest {
         assertEquals(goal.getId(), persisted.getId());
         assertEquals(new BigDecimal("250.00"), persisted.getCurrentAmount());
         assertEquals(new BigDecimal("25.00"), persisted.calculateProgress());
+
+        SavingsRecommendation recommendation =
+                controller.generateSavingsRecommendation(accountEmail, goal.getId());
+        assertEquals(new BigDecimal("62.50"), recommendation.getMonthlyTarget());
+        assertTrue(recommendation.getAdvice().contains("calculated monthly target: $62.50"));
     }
 
     @Test

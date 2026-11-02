@@ -2,6 +2,10 @@ package SavingsGoals;
 
 import DashboardCategories.Account;
 import DashboardCategories.DatabaseService;
+import AIIntegration.AIServiceFactory;
+import FinancialData.FinancialData;
+import FinancialData.FinancialDataFacade;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -9,10 +13,24 @@ import java.util.Objects;
 
 public class SavingsController {
     private final DatabaseService databaseService;
+    private final FinancialDataFacade financialDataFacade;
+    private final SavingsAI savingsAI;
 
     public SavingsController(DatabaseService databaseService) {
+        this(databaseService,
+                new FinancialDataFacade(databaseService),
+                new SavingsAI(AIServiceFactory.createDefaultService()));
+    }
+
+    public SavingsController(
+            DatabaseService databaseService,
+            FinancialDataFacade financialDataFacade,
+            SavingsAI savingsAI) {
         this.databaseService = Objects.requireNonNull(
                 databaseService, "Database service is required.");
+        this.financialDataFacade = Objects.requireNonNull(
+                financialDataFacade, "Financial data facade is required.");
+        this.savingsAI = Objects.requireNonNull(savingsAI, "Savings AI is required.");
     }
 
     public SavingsGoal createGoal(
@@ -40,6 +58,26 @@ public class SavingsController {
 
     public List<SavingsGoal> getGoals(String accountEmail) throws SQLException {
         return databaseService.getSavingsGoals(requireAccountEmail(accountEmail));
+    }
+
+    public SavingsRecommendation generateSavingsRecommendation(
+            String accountEmail, String goalId) throws SQLException, IOException {
+        String owner = requireAccountEmail(accountEmail);
+        if (goalId == null || goalId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Select a savings goal.");
+        }
+        FinancialData data = financialDataFacade.getFinancialData(owner);
+        SavingsGoal selectedGoal = null;
+        for (SavingsGoal goal : data.getSavingsGoals()) {
+            if (goal.getId().equals(goalId.trim())) {
+                selectedGoal = goal;
+                break;
+            }
+        }
+        if (selectedGoal == null) {
+            throw new IllegalArgumentException("Savings goal was not found.");
+        }
+        return savingsAI.analyzeSavingsGoal(selectedGoal, data);
     }
 
     public SavingsGoal addContribution(
