@@ -1,6 +1,6 @@
 package AccountCreation;
 
-import DashboardCategories.DatabaseService;
+import DatabaseService.DatabaseService;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

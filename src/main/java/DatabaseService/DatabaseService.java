@@ -1,7 +1,10 @@
-package DashboardCategories;
+package DatabaseService;
 
 import Budgeting.Budget;
 import Budgeting.BudgetPeriod;
+import DashboardCategories.Account;
+import DashboardCategories.Category;
+import DashboardCategories.Expense;
 import SavingsGoals.SavingsGoal;
 import java.math.BigDecimal;
 import java.sql.Connection;

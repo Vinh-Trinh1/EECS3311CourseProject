@@ -1,9 +1,9 @@
 
 package AccountCreation;
 
-import DashboardCategories.DatabaseService;
 import DashboardCategories.DashBoardGUI;
 import DashboardCategories.DashboardController;
+import DatabaseService.DatabaseService;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.sql.SQLException;

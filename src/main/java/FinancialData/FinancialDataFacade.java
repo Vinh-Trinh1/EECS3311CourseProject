@@ -2,7 +2,7 @@ package FinancialData;
 
 import Budgeting.Budget;
 import Budgeting.BudgetPeriod;
-import DashboardCategories.DatabaseService;
+import DatabaseService.DatabaseService;
 import SavingsGoals.SavingsGoal;
 
 import java.sql.SQLException;

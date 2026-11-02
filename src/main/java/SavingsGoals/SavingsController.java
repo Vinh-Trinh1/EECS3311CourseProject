@@ -1,8 +1,8 @@
 package SavingsGoals;
 
 import DashboardCategories.Account;
-import DashboardCategories.DatabaseService;
 import AIIntegration.AIServiceFactory;
+import DatabaseService.DatabaseService;
 import FinancialData.FinancialData;
 import FinancialData.FinancialDataFacade;
 import java.io.IOException;

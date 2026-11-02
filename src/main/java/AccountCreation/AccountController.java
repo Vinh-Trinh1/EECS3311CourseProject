@@ -1,7 +1,7 @@
 package AccountCreation;
 
-import DashboardCategories.DatabaseService;
 import DashboardCategories.NonMatchingPasswordException;
+import DatabaseService.DatabaseService;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Locale;

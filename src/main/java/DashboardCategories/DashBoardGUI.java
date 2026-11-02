@@ -8,6 +8,7 @@ import AccountCreation.LoginGUI;
 import Budgeting.BudgetAI;
 import Budgeting.BudgetController;
 import Budgeting.BudgetGUI;
+import DatabaseService.DatabaseService;
 import FinancialData.FinancialDataFacade;
 import SavingsGoals.SavingsController;
 import SavingsGoals.SavingsGoalGUI;
