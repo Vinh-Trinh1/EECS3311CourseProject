@@ -12,6 +12,8 @@
 <element><id>UMLUseCase</id><coordinates><x>370</x><y>694</y><w>270</w><h>54</h></coordinates><panel_attributes>UC7 Ask AI Financial Questions</panel_attributes><additional_attributes/></element>
 <element><id>UMLUseCase</id><coordinates><x>370</x><y>772</y><w>270</w><h>54</h></coordinates><panel_attributes>UC8 Generate Budget Recommendation</panel_attributes><additional_attributes/></element>
 <element><id>UMLUseCase</id><coordinates><x>370</x><y>850</y><w>270</w><h>54</h></coordinates><panel_attributes>UC9 Generate Savings Recommendation</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>928</y><w>270</w><h>54</h></coordinates><panel_attributes>UC12 Manage Recurring Expenses</panel_attributes><additional_attributes/></element>
+<element><id>UMLUseCase</id><coordinates><x>370</x><y>1006</y><w>270</w><h>54</h></coordinates><panel_attributes>UC13 View Spending Trends</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>40</x><y>432</y><w>90</w><h>110</h></coordinates><panel_attributes>User</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>960</x><y>198</y><w>90</w><h>110</h></coordinates><panel_attributes>Email/SMS Service (KnockAPI)</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>960</x><y>354</y><w>90</w><h>110</h></coordinates><panel_attributes>SQLite Database</panel_attributes><additional_attributes/></element>
@@ -42,4 +44,8 @@
 <element><id>Relation</id><coordinates><x>558</x><y>430</y><w>401</w><h>188</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;188;402;0</additional_attributes></element>
 <element><id>Relation</id><coordinates><x>505</x><y>202</y><w>1</w><h>24</h></coordinates><panel_attributes>lt=.&gt;
 &lt;&lt;include&gt;&gt;</panel_attributes><additional_attributes>0;0;0;24</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>542</y><w>240</w><h>413</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;240;413</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>130</x><y>542</y><w>240</w><h>491</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;0;240;491</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>640</x><y>409</y><w>320</w><h>546</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;546;320;0</additional_attributes></element>
+<element><id>Relation</id><coordinates><x>640</x><y>409</y><w>320</w><h>624</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;624;320;0</additional_attributes></element>
 </diagram>

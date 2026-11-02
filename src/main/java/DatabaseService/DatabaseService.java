@@ -5,6 +5,7 @@ import Budgeting.BudgetPeriod;
 import DashboardCategories.Account;
 import DashboardCategories.Category;
 import DashboardCategories.Expense;
+import DashboardCategories.RecurringExpense;
 import SavingsGoals.SavingsGoal;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -56,6 +57,28 @@ public class DatabaseService {
                             + "expense_date TEXT NOT NULL, "
                             + "description TEXT NOT NULL, "
                             + "category TEXT NOT NULL)");
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS recurring_expenses ("
+                            + "id TEXT PRIMARY KEY NOT NULL, "
+                            + "account_email TEXT NOT NULL COLLATE NOCASE, "
+                            + "amount_cents INTEGER NOT NULL CHECK (amount_cents > 0), "
+                            + "description TEXT NOT NULL, "
+                            + "category TEXT NOT NULL, "
+                            + "interval TEXT NOT NULL CHECK (interval IN ('weekly', 'monthly')), "
+                            + "next_due_date TEXT NOT NULL, "
+                            + "end_date TEXT, "
+                            + "active INTEGER NOT NULL CHECK (active IN (0, 1)), "
+                            + "monthly_anchor_day INTEGER NOT NULL "
+                            + "CHECK (monthly_anchor_day BETWEEN 1 AND 31), "
+                            + "month_end_anchor INTEGER NOT NULL "
+                            + "CHECK (month_end_anchor IN (0, 1)))");
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS recurring_expense_occurrences ("
+                            + "recurring_expense_id TEXT NOT NULL "
+                            + "REFERENCES recurring_expenses(id) ON DELETE CASCADE, "
+                            + "due_date TEXT NOT NULL, "
+                            + "account_email TEXT NOT NULL COLLATE NOCASE, "
+                            + "PRIMARY KEY (recurring_expense_id, due_date))");
             statement.executeUpdate(
                     "CREATE TABLE IF NOT EXISTS savings_goals ("
                             + "id TEXT PRIMARY KEY NOT NULL, "
@@ -167,6 +190,213 @@ public class DatabaseService {
             statement.setString(3, expense.getDate().toString());
             statement.setString(4, expense.getDescription());
             statement.setString(5, expense.getCategory());
+            statement.executeUpdate();
+        }
+    }
+
+    public void saveRecurringExpense(
+            String accountEmail, RecurringExpense recurrence) throws SQLException {
+        String sql = "INSERT INTO recurring_expenses "
+                + "(id, account_email, amount_cents, description, category, interval, "
+                + "next_due_date, end_date, active, monthly_anchor_day, month_end_anchor) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, recurrence.getId());
+            statement.setString(2, requireAccountEmail(accountEmail));
+            statement.setLong(3, toCents(recurrence.getAmount()));
+            statement.setString(4, recurrence.getDescription());
+            statement.setString(5, recurrence.getCategory());
+            statement.setString(6, recurrence.getInterval().getValue());
+            statement.setString(7, recurrence.getNextDueDate().toString());
+            statement.setString(
+                    8, recurrence.getEndDate() == null ? null : recurrence.getEndDate().toString());
+            statement.setInt(9, recurrence.isActive() ? 1 : 0);
+            statement.setInt(10, recurrence.getMonthlyAnchorDay());
+            statement.setInt(11, recurrence.isMonthEndAnchor() ? 1 : 0);
+            statement.executeUpdate();
+        }
+    }
+
+    public List<RecurringExpense> getRecurringExpenses(String accountEmail)
+            throws SQLException {
+        List<RecurringExpense> expenses = new ArrayList<>();
+        String sql = "SELECT id, amount_cents, description, category, interval, "
+                + "next_due_date, end_date, active, monthly_anchor_day, month_end_anchor "
+                + "FROM recurring_expenses WHERE account_email = ? COLLATE NOCASE "
+                + "ORDER BY active DESC, next_due_date, description COLLATE NOCASE";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, requireAccountEmail(accountEmail));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    String endDate = resultSet.getString("end_date");
+                    expenses.add(new RecurringExpense(
+                            resultSet.getString("id"),
+                            BigDecimal.valueOf(resultSet.getLong("amount_cents"), 2),
+                            resultSet.getString("description"),
+                            resultSet.getString("category"),
+                            DashboardCategories.RecurrenceInterval.fromValue(
+                                    resultSet.getString("interval")),
+                            LocalDate.parse(resultSet.getString("next_due_date")),
+                            endDate == null ? null : LocalDate.parse(endDate),
+                            resultSet.getInt("active") == 1,
+                            resultSet.getInt("monthly_anchor_day"),
+                            resultSet.getInt("month_end_anchor") == 1));
+                }
+            }
+        }
+        return expenses;
+    }
+
+    public void updateRecurringExpense(
+            String accountEmail, RecurringExpense recurrence) throws SQLException {
+        String sql = "UPDATE recurring_expenses SET amount_cents = ?, description = ?, "
+                + "category = ?, interval = ?, next_due_date = ?, end_date = ?, "
+                + "monthly_anchor_day = ?, month_end_anchor = ? "
+                + "WHERE account_email = ? COLLATE NOCASE AND id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, toCents(recurrence.getAmount()));
+            statement.setString(2, recurrence.getDescription());
+            statement.setString(3, recurrence.getCategory());
+            statement.setString(4, recurrence.getInterval().getValue());
+            statement.setString(5, recurrence.getNextDueDate().toString());
+            statement.setString(
+                    6, recurrence.getEndDate() == null ? null : recurrence.getEndDate().toString());
+            statement.setInt(7, recurrence.getMonthlyAnchorDay());
+            statement.setInt(8, recurrence.isMonthEndAnchor() ? 1 : 0);
+            statement.setString(9, requireAccountEmail(accountEmail));
+            statement.setString(10, recurrence.getId());
+            if (statement.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Recurring expense was not found.");
+            }
+        }
+    }
+
+    public void setRecurringExpenseActive(
+            String accountEmail, String id, boolean active) throws SQLException {
+        String sql = "UPDATE recurring_expenses SET active = ? "
+                + "WHERE account_email = ? COLLATE NOCASE AND id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, active ? 1 : 0);
+            statement.setString(2, requireAccountEmail(accountEmail));
+            statement.setString(3, id);
+            if (statement.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Recurring expense was not found.");
+            }
+        }
+    }
+
+    public void deleteRecurringExpense(String accountEmail, String id) throws SQLException {
+        String sql = "DELETE FROM recurring_expenses "
+                + "WHERE account_email = ? COLLATE NOCASE AND id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, requireAccountEmail(accountEmail));
+            statement.setString(2, id);
+            if (statement.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Recurring expense was not found.");
+            }
+        }
+    }
+
+    public int processDueRecurringExpenses(String accountEmail, LocalDate today)
+            throws SQLException {
+        String owner = requireAccountEmail(accountEmail);
+        boolean previousAutoCommit = connection.getAutoCommit();
+        connection.setAutoCommit(false);
+        int createdCount = 0;
+        try {
+            List<RecurringExpense> due = new ArrayList<>();
+            String select = "SELECT id, amount_cents, description, category, interval, "
+                    + "next_due_date, end_date, active, monthly_anchor_day, month_end_anchor "
+                    + "FROM recurring_expenses WHERE account_email = ? COLLATE NOCASE "
+                    + "AND active = 1 AND next_due_date <= ? ORDER BY next_due_date";
+            try (PreparedStatement statement = connection.prepareStatement(select)) {
+                statement.setString(1, owner);
+                statement.setString(2, today.toString());
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String endDate = resultSet.getString("end_date");
+                        due.add(new RecurringExpense(
+                                resultSet.getString("id"),
+                                BigDecimal.valueOf(resultSet.getLong("amount_cents"), 2),
+                                resultSet.getString("description"),
+                                resultSet.getString("category"),
+                                DashboardCategories.RecurrenceInterval.fromValue(
+                                        resultSet.getString("interval")),
+                                LocalDate.parse(resultSet.getString("next_due_date")),
+                                endDate == null ? null : LocalDate.parse(endDate),
+                                true,
+                                resultSet.getInt("monthly_anchor_day"),
+                                resultSet.getInt("month_end_anchor") == 1));
+                    }
+                }
+            }
+
+            for (RecurringExpense recurrence : due) {
+                LocalDate dueDate = recurrence.getNextDueDate();
+                while (!dueDate.isAfter(today)
+                        && (recurrence.getEndDate() == null
+                                || !dueDate.isAfter(recurrence.getEndDate()))) {
+                    if (insertRecurringOccurrence(recurrence, owner, dueDate)) {
+                        insertRecurringExpense(recurrence, owner, dueDate);
+                        createdCount++;
+                    }
+                    dueDate = recurrence.nextDateAfter(dueDate);
+                }
+                boolean active = recurrence.getEndDate() == null
+                        || !dueDate.isAfter(recurrence.getEndDate());
+                updateRecurringExpenseNextDueDate(
+                        recurrence.getId(), owner, dueDate, active);
+            }
+            connection.commit();
+            return createdCount;
+        } catch (SQLException | RuntimeException exception) {
+            connection.rollback();
+            throw exception;
+        } finally {
+            connection.setAutoCommit(previousAutoCommit);
+        }
+    }
+
+    private boolean insertRecurringOccurrence(
+            RecurringExpense recurrence, String accountEmail, LocalDate dueDate)
+            throws SQLException {
+        String sql = "INSERT INTO recurring_expense_occurrences "
+                + "(recurring_expense_id, due_date, account_email) VALUES (?, ?, ?) "
+                + "ON CONFLICT(recurring_expense_id, due_date) DO NOTHING";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, recurrence.getId());
+            statement.setString(2, dueDate.toString());
+            statement.setString(3, accountEmail);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    private void insertRecurringExpense(
+            RecurringExpense recurrence, String accountEmail, LocalDate dueDate)
+            throws SQLException {
+        String sql = "INSERT INTO monthly_expenses "
+                + "(account_email, amount_cents, expense_date, description, category) "
+                + "VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, accountEmail);
+            statement.setLong(2, toCents(recurrence.getAmount()));
+            statement.setString(3, dueDate.toString());
+            statement.setString(4, recurrence.getDescription());
+            statement.setString(5, recurrence.getCategory());
+            statement.executeUpdate();
+        }
+    }
+
+    private void updateRecurringExpenseNextDueDate(
+            String id, String accountEmail, LocalDate nextDueDate, boolean active)
+            throws SQLException {
+        String sql = "UPDATE recurring_expenses SET next_due_date = ?, active = ? "
+                + "WHERE account_email = ? COLLATE NOCASE AND id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, nextDueDate.toString());
+            statement.setInt(2, active ? 1 : 0);
+            statement.setString(3, accountEmail);
+            statement.setString(4, id);
             statement.executeUpdate();
         }
     }

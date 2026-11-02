@@ -82,6 +82,8 @@ Classes that support the agents
 
 ## 1.2 Feature Specification: 
 
+This specification defines 12 features (F01-F12), including the account and login experience.
+
 ## F01 - Account Creation 
 
 This feature will allow the user to create an account for the application. This will store the user’s login info, along with their financial information, savings goals, expenses, and any other data associated with their account. The user will select the create account option on the application’s login screen, and a form will appear where they can input information. The user will require user’s information, like an email and a phone number, along with confirming their password and whether they want to be reached by phone or email. It will tell the user an account has been created. This feature is deterministic. The user will select the create account option and enter required information. The system will check if the phone number or email has been used already. If everything is valid, it will create an account and save the information to a database. If a field is empty or information is invalid, the application will ask the user to fix the information. If a phone number or email is already associated with an account, it will ask the user to log into that account. 
@@ -125,6 +127,14 @@ This feature will display the user’s budget next to the amount they spent in a
 This will provide a layer of security for the user by requiring the user to provide a verification code sent to their email or phone number. The user will interact with their phone or email address, where they will then input the 6-digit code into the application. The feature requires the user’s login information and a valid verification code. This feature will allow the user to access their account if the verification code is correct or deny access if the code is not. The feature will be deterministic. The expected workflow is that 
 
 the user will enter a username and password. Provided this is correct, a code will be sent to the email or phone number, and the user will enter this into the GUI. The system verifies the code to make sure it's correct and allows access depending on the result. If an incorrect code is entered, a message will be sent to the user asking them to try again, up to 3 attempts. If the code expires, it will have an option for the user to request a new code. The user will be timed out if they input information incorrectly 3 times. 
+
+## F11 - Manage Recurring Expenses
+
+This feature lets the user create, pause, resume, and delete recurring expenses such as rent or subscriptions. The user provides an amount, category, recurrence interval, and next due date, with an optional end date. When the recurring-expense manager is opened, the application records each due occurrence not yet processed and advances the next due date; missed occurrences are caught up without duplicates. Monthly schedules preserve their original calendar day, or month-end when initially scheduled on the last day of a month. The feature is deterministic and does not charge an external account. Invalid amounts or dates are rejected, and pausing or deleting a recurrence prevents future expenses from being recorded.
+
+## F12 - View Spending Trends
+
+This feature summarizes the user's recorded expenses over a selected date range. It shows totals by category and compares the selected period with the immediately preceding period of equal length when data is available. The feature is deterministic and uses recorded expenses only; it does not generate AI financial advice. If the selected period has no expenses, the application displays an empty-state message instead of misleading totals.
 
 ## Task 2: Design System using UML 
 
@@ -812,6 +822,75 @@ Related feature:
 
 F10 - 2FA 
 
+UC12 - Manage Recurring Expenses
+
+Actor(s): User, SQLite Database
+
+Goal: Create and maintain scheduled expenses so they are recorded once on each due date.
+
+Preconditions:
+
+- The user has an account and is signed in.
+
+Trigger:
+
+- The user opens recurring expenses and selects the option to add or manage a recurrence.
+
+Main Success Scenario:
+
+- The user creates or selects a recurring expense.
+- The user enters or updates its amount, category, interval, and next due date.
+- The system validates the values and saves the recurrence for the signed-in user.
+- On a due date, the system records one expense and advances the next due date.
+- The system displays the updated recurrence and expense history.
+
+Alternative/Exception flows:
+
+- Required values are missing or invalid: the system explains the error and asks the user to correct the values.
+- The user pauses or deletes a recurrence: the system saves the change and does not create future expenses while paused or deleted.
+- The selected recurrence has already been processed for its due date: the system does not create a duplicate expense.
+
+Postconditions:
+
+- The recurrence is stored with its current status and next due date.
+- Any due expense is recorded no more than once.
+
+Related feature: F11 - Manage Recurring Expenses
+
+UC13 - View Spending Trends
+
+Actor(s): User, SQLite Database
+
+Goal: Review expense totals and category-level changes over time.
+
+Preconditions:
+
+- The user has an account and is signed in.
+
+Trigger:
+
+- The user opens spending trends and selects a date range.
+
+Main Success Scenario:
+
+- The user selects a start and end date.
+- The system validates the date range and retrieves the user's recorded expenses.
+- The system groups expenses by category and period, then calculates totals.
+- When prior-period data is available, the system calculates the change from the previous equivalent period.
+- The system displays the totals and trends.
+
+Alternative/Exception flows:
+
+- The date range is invalid: the system asks the user to select a valid range.
+- No expenses exist in the selected range: the system displays an empty-state message.
+- No prior-period expenses exist: the system displays current totals without a misleading percentage change.
+
+Postconditions:
+
+- The user sees a summary of recorded expenses for the selected date range.
+
+Related feature: F12 - View Spending Trends
+
 ## Task 2.3 - Sequence Diagram 
 
 The sequence diagrams SD1 to SD6 are included in the Diagrams section at the end of this document. 
@@ -1355,10 +1434,14 @@ Task 3: Feature-To-Design Traceability
 |F08|Recommendati<br>ons based on<br>Savings Goal|AI-Based|UC9 -<br>Generate<br>Savings Reco<br>mmendation|SavingsGoalGUI,<br>SavingsController,<br>FinancialDataFacade,<br>SavingsAI, AIServiceProxy,<br>SavingsGoal,<br>Recommendation,<br>DatabaseService|requestRecommendation(<br>), generateSavingsRecom<br>mendation(),<br>getFinancialData(),<br>analyzeSavingsGoal(),<br>calculateMonthlyTarget()|SD3 -<br>Savings<br>Goal and<br>Savings Rec<br>ommendatio<br>n|Facade,<br>Proxy|
 |F09|Budget vs.<br>Actual Spent|Deterministic|UC10 -<br>Compare<br>Budget vs<br>Actual<br>Spending|BudgetGUI,<br>BudgetController,<br>FinancialDataFacade,<br>Budget, Expense,<br>DatabaseService|getBudget(),<br>getExpenses(),<br>calculateActual(),<br>calculateDifference(),<br>compareBudgetToActual()|SD5 -<br>Budget vs<br>Actual<br>Spending|Facade|
 |F10|Two-Factor<br>Authentication|Deterministic|UC11 - Verify<br>Two-Factor<br>Authentication|LoginGUI,<br>AccountController,<br>AuthenticationService, TwoF<br>actorAuthenticationProxy,<br>TwoFactorAuthentication,<br>DatabaseService,<br>EmailSMSService|submitLogin(), login(),<br>verifyCredentials(),<br>generateCode(),<br>sendCode(), verifyCode()|SD1 -<br>Account<br>Creation and<br>Login/2FA|Proxy,<br>Singleton|
+|F11|Recurring<br>Expenses|Deterministic|UC12 - Manage<br>Recurring<br>Expenses|RecurringExpensesGUI,<br>RecurringExpenseController,<br>RecurringExpense,<br>DatabaseService|create(),<br>update(),<br>setActive(),<br>delete(),<br>processDueExpenses(),<br>saveRecurringExpense()|Not yet designed|Singleton|
+|F12|Spending<br>Trends|Deterministic|UC13 - View<br>Spending<br>Trends|SpendingTrendsGUI,<br>SpendingTrendsController,<br>SpendingTrends,<br>DatabaseService|getTrends(),<br>getExpenseTotalsBetween(),<br>formatReport()|Not yet designed|None|
 
 
 
 Patterns are limited to those covered in the course: Facade, Composite, Builder, Proxy, Adapter and Singleton. Singleton refers to DatabaseService, which every feature that stores data uses. The agent classes for F04, F06, F07 and F08 (ExpenseCategorizerAI, ChatAI, BudgetAI, SavingsAI) extend FinanceAgent; see Agent Behavior. 
+
+F11 and F12 are implemented in the application and represented in the use-case diagram. Their classes have not yet been added to the class diagram, and their sequence diagrams have not yet been designed.
 
 Task 4 - Explain How Each Feature Is Realized 
 
@@ -1752,6 +1835,14 @@ Upon credential verification via AuthenticationService, TwoFactorAuthenticationP
 
 The implemented email delivery uses Knock. Configure `KNOCK_API_KEY` and `KNOCK_2FA_WORKFLOW_KEY` in the process environment, and configure that Knock workflow with an email step that includes `{{ data.code }}`. The recipient is the verified account email. Codes expire after five minutes, are single-use, and three failed attempts cause a 15-minute lockout. Missing Knock configuration or delivery failure prevents sign-in; credentials are not stored in source code.
 
+## F11 - Manage Recurring Expenses
+
+RecurringExpensesGUI collects a recurring expense and provides pause/resume and delete controls. RecurringExpenseController validates and coordinates changes; DatabaseService stores each schedule and processes due entries transactionally. A unique occurrence record prevents a due date from being recorded twice. Due entries are caught up when the recurring-expense manager opens; the application does not run a background scheduler or move money from an external account.
+
+## F12 - View Spending Trends
+
+SpendingTrendsGUI accepts an inclusive start and end date and displays totals by category with a comparison to the immediately preceding period of equal length. SpendingTrendsController validates the range and retrieves both periods from DatabaseService. The report shows the absolute and percentage change when a previous-period total exists, and avoids a percentage when there is no non-zero baseline.
+
 Task 2.1: Class Diagram - AI Personal Finance Assistant 
 
 
@@ -1774,7 +1865,7 @@ Task 2.2: Use-Case Diagram - AI Personal Finance Assistant
 
 
 <!-- Start of picture text -->
-UC1 Create Account<br>UC2 Login<br><<include>><br>UC11 Verify Two-Factor<br>Authentication<br>Email/SMS Service<br>(KnockAPI)<br>UC3 Manage Dashboard<br>Information<br>UC4 Manage Dashboard<br>Categories<br>SQLite Database<br>UC6 Manage Savings Goal<br>User<br>UC10 Compare Budget vs Actual<br>Spending<br>UC5 Record Monthly Expense<br>UC7 Ask AI Financial Questions<br>UC8 Generate Budget<br>Recommendation AI Service<br>(ChatGPT 5)<br>UC9 Generate Savings<br>Recommendation<br>System boundary: AI Personal Finance Assistant<br><!-- End of picture text -->
+UC1 Create Account<br>UC2 Login<br><<include>><br>UC11 Verify Two-Factor<br>Authentication<br>Email/SMS Service<br>(KnockAPI)<br>UC3 Manage Dashboard<br>Information<br>UC4 Manage Dashboard<br>Categories<br>SQLite Database<br>UC6 Manage Savings Goal<br>User<br>UC10 Compare Budget vs Actual<br>Spending<br>UC5 Record Monthly Expense<br>UC7 Ask AI Financial Questions<br>UC8 Generate Budget<br>Recommendation AI Service<br>(ChatGPT 5)<br>UC9 Generate Savings<br>Recommendation<br>UC12 Manage Recurring Expenses<br>UC13 View Spending Trends<br>System boundary: AI Personal Finance Assistant<br><!-- End of picture text -->
 
 |Feature coverage||||
 |---|---|---|---|
@@ -1783,6 +1874,7 @@ UC1 Create Account<br>UC2 Login<br><<include>><br>UC11 Verify Two-Factor<br>Auth
 |F03 Categories for dashboard|-> UC4|F08 Recommendations based on savings goal|-> UC9|
 |F04 Monthly Expense|-> UC5|F09 Budget vs. actual spent|-> UC10|
 |F05 Save goal tracker|-> UC6|F10 2FA|-> UC11|
+|F11 Manage recurring expenses|-> UC12|F12 View spending trends|-> UC13|
 
 
 

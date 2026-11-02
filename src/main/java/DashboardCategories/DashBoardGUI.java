@@ -86,6 +86,10 @@ public class DashBoardGUI extends JFrame {
         chatButton.addActionListener(event -> openChat());
         JButton budgetButton = new JButton("Suggested budget");
         budgetButton.addActionListener(event -> openBudget());
+        JButton recurringButton = new JButton("Recurring expenses");
+        recurringButton.addActionListener(event -> openRecurringExpenses());
+        JButton trendsButton = new JButton("Spending trends");
+        trendsButton.addActionListener(event -> openSpendingTrends());
 
         JPanel dashboard = new JPanel(new BorderLayout(8, 12));
         dashboard.add(content, BorderLayout.NORTH);
@@ -97,12 +101,14 @@ public class DashBoardGUI extends JFrame {
         actions.add(savingsButton);
         actions.add(chatButton);
         actions.add(budgetButton);
+        actions.add(recurringButton);
+        actions.add(trendsButton);
         actions.add(balanceLabel);
         dashboard.add(actions, BorderLayout.SOUTH);
 
         add(dashboard, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
-        setSize(520, 380);
+        setSize(560, 460);
         setLocationRelativeTo(null);
     }
 
@@ -241,6 +247,36 @@ public class DashBoardGUI extends JFrame {
             new BudgetGUI(budgetController, email).setVisible(true);
         } catch (SQLException exception) {
             showError("Could not open budget recommendations: " + exception.getMessage());
+        }
+    }
+
+    private void openRecurringExpenses() {
+        String email = requireAccountEmail(
+                "Enter an account email before managing recurring expenses.");
+        if (email == null) {
+            return;
+        }
+        try {
+            RecurringExpenseController recurringController =
+                    new RecurringExpenseController(DatabaseService.getInstance());
+            new RecurringExpensesGUI(recurringController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open recurring expenses: " + exception.getMessage());
+        }
+    }
+
+    private void openSpendingTrends() {
+        String email = requireAccountEmail(
+                "Enter an account email before viewing spending trends.");
+        if (email == null) {
+            return;
+        }
+        try {
+            SpendingTrendsController trendsController =
+                    new SpendingTrendsController(DatabaseService.getInstance());
+            new SpendingTrendsGUI(trendsController, email).setVisible(true);
+        } catch (SQLException exception) {
+            showError("Could not open spending trends: " + exception.getMessage());
         }
     }
 
