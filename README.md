@@ -22,7 +22,10 @@ The Swing application entry point is `app.Main`.
 
 ## Knock email verification
 
-Set `KNOCK_API_KEY` and `KNOCK_2FA_WORKFLOW_KEY` in the environment before
-launching the application. Configure the Knock workflow with an email step
-addressed to the recipient and include `{{ data.code }}` in the message. The
-application sends verification codes to the email address on the account.
+The application uses the [Knock Java SDK](https://github.com/knocklabs/knock-java)
+to trigger email verification workflows. Set `KNOCK_API_KEY` and
+`KNOCK_2FA_WORKFLOW_KEY` in the environment before launching the application.
+Configure the workflow with an email step addressed to the recipient and include
+`{{ data.code }}` in the message. The application identifies the recipient by
+the account's email address and sends the generated verification code as
+`data.code`.
