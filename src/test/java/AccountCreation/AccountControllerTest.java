@@ -1,6 +1,8 @@
 package AccountCreation;
 
 import DatabaseService.DatabaseService;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -137,12 +139,16 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void knockDeliveryRequiresEnvironmentConfiguration() throws Exception {
+    public void localDeliveryWritesDevelopmentCodeToConsole() throws Exception {
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            new KnockEmailCodeDelivery("", "").deliver(email, "123456");
-            fail("Expected missing Knock configuration to block delivery.");
-        } catch (IllegalStateException expected) {
-            assertTrue(expected.getMessage().contains("KNOCK_API_KEY"));
+            System.setOut(new PrintStream(output, true, "UTF-8"));
+            new LocalVerificationCodeDelivery().deliver(email, "123456");
+            assertTrue(output.toString("UTF-8").contains("123456"));
+            assertTrue(output.toString("UTF-8").contains("development-only"));
+        } finally {
+            System.setOut(originalOut);
         }
     }
 

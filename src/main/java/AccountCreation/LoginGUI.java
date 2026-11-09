@@ -59,7 +59,7 @@ public class LoginGUI extends JFrame {
         loginButton.addActionListener(event -> logIn());
         panel.add(new JLabel());
         panel.add(loginButton);
-        panel.add(new JLabel("Email verification code:"));
+        panel.add(new JLabel("Verification code:"));
         panel.add(verificationCodeField);
         JButton verifyButton = new JButton("Verify and continue");
         verifyButton.addActionListener(event -> verifyCode());
@@ -91,15 +91,16 @@ public class LoginGUI extends JFrame {
     private void logIn() {
         char[] password = loginPasswordField.getPassword();
         try {
-            String email = controller.requestLoginCode(loginIdentifierField.getText(), password);
-            if (email == null) {
+            String accountEmail =
+                    controller.requestLoginCode(loginIdentifierField.getText(), password);
+            if (accountEmail == null) {
                 showError("Email, phone number, or password is incorrect.");
                 return;
             }
             JOptionPane.showMessageDialog(
                     this,
-                    "A verification code was sent to " + email + ".",
-                    "Check your email",
+                    "A development-only verification code was written to the application console.",
+                    "Check the application console",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (IllegalArgumentException | IllegalStateException
                 | SQLException | IOException exception) {

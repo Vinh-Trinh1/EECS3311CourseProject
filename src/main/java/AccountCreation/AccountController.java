@@ -18,7 +18,7 @@ public class AccountController {
 
     public AccountController(DatabaseService databaseService) {
         this(databaseService, new TwoFactorAuthenticationProxy(
-                new TwoFactorAuthentication(new KnockEmailCodeDelivery())));
+                new TwoFactorAuthentication(new LocalVerificationCodeDelivery())));
     }
 
     public AccountController(

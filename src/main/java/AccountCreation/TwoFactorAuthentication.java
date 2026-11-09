@@ -15,17 +15,18 @@ import java.util.Objects;
 public class TwoFactorAuthentication implements TwoFactorService {
     private static final long CODE_LIFETIME_MILLIS = 5 * 60 * 1000L;
 
-    private final EmailCodeDelivery emailDelivery;
+    private final VerificationCodeDelivery codeDelivery;
     private final Clock clock;
     private final SecureRandom random;
     private final Map<String, VerificationCode> codes = new HashMap<>();
 
-    public TwoFactorAuthentication(EmailCodeDelivery emailDelivery) {
-        this(emailDelivery, Clock.systemUTC(), new SecureRandom());
+    public TwoFactorAuthentication(VerificationCodeDelivery codeDelivery) {
+        this(codeDelivery, Clock.systemUTC(), new SecureRandom());
     }
 
-    TwoFactorAuthentication(EmailCodeDelivery emailDelivery, Clock clock, SecureRandom random) {
-        this.emailDelivery = Objects.requireNonNull(emailDelivery, "Email delivery is required.");
+    TwoFactorAuthentication(
+            VerificationCodeDelivery codeDelivery, Clock clock, SecureRandom random) {
+        this.codeDelivery = Objects.requireNonNull(codeDelivery, "Code delivery is required.");
         this.clock = Objects.requireNonNull(clock, "Clock is required.");
         this.random = Objects.requireNonNull(random, "Random source is required.");
     }
@@ -35,7 +36,7 @@ public class TwoFactorAuthentication implements TwoFactorService {
         String recipient = normalizeEmail(email);
         codes.remove(recipient);
         String code = String.format(Locale.ROOT, "%06d", random.nextInt(1000000));
-        emailDelivery.deliver(recipient, code);
+        codeDelivery.deliver(recipient, code);
         codes.put(recipient, new VerificationCode(hash(code), clock.millis() + CODE_LIFETIME_MILLIS));
     }
 

@@ -20,12 +20,13 @@ mvn test
 
 The Swing application entry point is `app.Main`.
 
-## Knock email verification
+## Local development verification codes
 
-The application uses the [Knock Java SDK](https://github.com/knocklabs/knock-java)
-to trigger email verification workflows. Set `KNOCK_API_KEY` and
-`KNOCK_2FA_WORKFLOW_KEY` in the environment before launching the application.
-Configure the workflow with an email step addressed to the recipient and include
-`{{ data.code }}` in the message. The application identifies the recipient by
-the account's email address and sends the generated verification code as
-`data.code`.
+The application does not use Knock or an external email/SMS service. After a
+successful password check, it prints the one-time verification code to the
+application console. Codes expire after five minutes, are single-use, and three
+failed attempts cause a 15-minute lockout.
+
+Console delivery is for local development only: anyone with access to the
+console can read the code. Do not use this delivery method in production. The
+account still requires an email address, but the code is not sent by email.

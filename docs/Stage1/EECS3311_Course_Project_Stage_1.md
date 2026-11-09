@@ -150,7 +150,7 @@ The class diagram on the next page shows the major classes and interfaces of the
 
 - Domain and data classes (User, Account, Category, CategoryGroup, Expense, SavingsGoal, Budget, Recommendation, FinancialData) and DatabaseService. 
 
-External systems appear as classes marked external: EmailSMSService (provided by KnockAPI) and ChatGPT5API. 
+External systems appear as classes marked external: ChatGPT5API. Verification codes are printed locally by the development-only console delivery adapter.
 
 Naming note: Category is used in two ways that match the feature descriptions. In F03 a Category is a dashboard category with its own balance (Savings, Checking, Total Amount); it is the leaf of the Composite. In F04 an Expense is assigned to a Category. 
 
@@ -242,7 +242,7 @@ Participating classes and roles.
 
 - TwoFactorAuthenticationProxy: the proxy. It counts failedAttempts, enforces maxAttempts (3), stores lockedUntil and runs checkLockout() before passing a request on. 
 
-- TwoFactorAuthentication: the real subject. It generates and verifies the code and sends it through EmailSMSService. 
+- TwoFactorAuthentication: the real subject. It generates and verifies the code and passes it to the configured code-delivery adapter.
 
 - AuthenticationService: the client. 
 
@@ -360,7 +360,7 @@ Related feature: F01 - Account creation
 
 UC2 - Login 
 
-Actor(s): User, SQLite (database), KnockAPI (For 2FA) Goal: Allow user to access account Preconditions: 
+Actor(s): User, SQLite (database) Goal: Allow user to access account Preconditions:
 
 - User has an existing account 
 
@@ -1831,9 +1831,9 @@ Related Use Case: UC11 - Verify Two-Factor Authentication Related Sequence Diagr
 
 ## Execution 
 
-Upon credential verification via AuthenticationService, TwoFactorAuthenticationProxy intercepts system routing and triggers code generation via TwoFactorAuthentication. EmailSMSService sends a 6-digit passcode to the user. TwoFactorAuthenticationProxy evaluates user input, enforcing attempt thresholds and expiration timeouts before permitting navigation to the main application dashboard 
+Upon credential verification via AuthenticationService, TwoFactorAuthenticationProxy intercepts system routing and triggers code generation via TwoFactorAuthentication. The local development adapter prints a 6-digit passcode to the application console. TwoFactorAuthenticationProxy evaluates user input, enforcing attempt thresholds and expiration timeouts before permitting navigation to the main application dashboard.
 
-The implemented email delivery uses Knock. Configure `KNOCK_API_KEY` and `KNOCK_2FA_WORKFLOW_KEY` in the process environment, and configure that Knock workflow with an email step that includes `{{ data.code }}`. The recipient is the verified account email. Codes expire after five minutes, are single-use, and three failed attempts cause a 15-minute lockout. Missing Knock configuration or delivery failure prevents sign-in; credentials are not stored in source code.
+Console delivery is intended only for local development because anyone with console access can read the code. Codes expire after five minutes, are single-use, and three failed attempts cause a 15-minute lockout. Accounts continue to require an email address, but verification codes are not sent by email.
 
 ## F11 - Manage Recurring Expenses
 

@@ -663,12 +663,11 @@ ChatGPTAdapter
       <w>187</w>
       <h>104</h>
     </coordinates>
-    <panel_attributes>&lt;&lt;external&gt;&gt;
-EmailSMSService
+    <panel_attributes>LocalVerificationCodeDelivery
 --
 
 --
-+send(contact, message)</panel_attributes>
++deliver(recipient, code)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

@@ -15,7 +15,7 @@
 <element><id>UMLUseCase</id><coordinates><x>370</x><y>928</y><w>270</w><h>54</h></coordinates><panel_attributes>UC12 Manage Recurring Expenses</panel_attributes><additional_attributes/></element>
 <element><id>UMLUseCase</id><coordinates><x>370</x><y>1006</y><w>270</w><h>54</h></coordinates><panel_attributes>UC13 View Spending Trends</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>40</x><y>432</y><w>90</w><h>110</h></coordinates><panel_attributes>User</panel_attributes><additional_attributes/></element>
-<element><id>UMLActor</id><coordinates><x>960</x><y>198</y><w>90</w><h>110</h></coordinates><panel_attributes>Email/SMS Service (KnockAPI)</panel_attributes><additional_attributes/></element>
+<element><id>UMLActor</id><coordinates><x>960</x><y>198</y><w>90</w><h>110</h></coordinates><panel_attributes>Application Console (development only)</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>960</x><y>354</y><w>90</w><h>110</h></coordinates><panel_attributes>SQLite Database</panel_attributes><additional_attributes/></element>
 <element><id>UMLActor</id><coordinates><x>960</x><y>705</y><w>90</w><h>110</h></coordinates><panel_attributes>AI Service (ChatGPT 5)</panel_attributes><additional_attributes/></element>
 <element><id>Relation</id><coordinates><x>130</x><y>123</y><w>346</w><h>321</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>0;322;347;0</additional_attributes></element>

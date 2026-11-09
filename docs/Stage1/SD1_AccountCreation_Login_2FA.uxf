@@ -9,7 +9,7 @@ obj=AuthenticationService~a
 obj=DatabaseService~d
 obj=TwoFactorAuthenticationProxy~p
 obj=TwoFactorAuthentication~t
-obj=EmailSMSService~e
+obj=LocalVerificationCodeDelivery~e
 obj=DashboardGUI~dg
 u-&gt;g: submitAccountInfo(email, phone, password, confirm, contactPref)
 g-&gt;c: createAccount(info)
@@ -29,8 +29,8 @@ d--&gt;a: User
 a-&gt;p: requestCode(user)
 p-&gt;t: requestCode(user)
 t-&gt;t: generateCode()
-t-&gt;e: sendCode(contact, code)
-e--&gt;u: 6-digit code by email or SMS
+t-&gt;e: deliver(recipient, code)
+e--&gt;u: print development-only code to application console
 u-&gt;g: submitCode(code)
 g-&gt;c: verifyCode(code)
 c-&gt;a: verifyCode(user, code)
@@ -48,5 +48,5 @@ c-&gt;dg: displayDashboard()
 - Wrong password: login denied, no code sent.
 - Wrong code: retry; after 3 failures the proxy locks the user out temporarily.
 - Code expired: user requests a new code.
-- EmailSMSService unavailable: user is told the code could not be sent.</panel_attributes><additional_attributes/></element>
+- Console delivery is local-development only; anyone with console access can read the code.</panel_attributes><additional_attributes/></element>
 </diagram>
