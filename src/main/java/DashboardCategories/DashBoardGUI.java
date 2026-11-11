@@ -1,5 +1,18 @@
 package DashboardCategories;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import AIChat.AIController;
 import AIChat.ChatGUI;
 import AIIntegration.AIService;
@@ -12,18 +25,6 @@ import DatabaseService.DatabaseService;
 import FinancialData.FinancialDataFacade;
 import SavingsGoals.SavingsController;
 import SavingsGoals.SavingsGoalGUI;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 public class DashBoardGUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -197,7 +198,7 @@ public class DashBoardGUI extends JFrame {
                     DatabaseService.getInstance(),
                     new ExpenseCategorizerAdapter(AIServiceFactory.createDefaultService()));
             new ExpenseGUI(expenseController, email).setVisible(true);
-        } catch (SQLException exception) {
+        } catch (SQLException | IllegalStateException exception) {
             showError("Could not open monthly expenses: " + exception.getMessage());
         }
     }
@@ -211,7 +212,7 @@ public class DashBoardGUI extends JFrame {
             SavingsController savingsController =
                     new SavingsController(DatabaseService.getInstance());
             new SavingsGoalGUI(savingsController, email).setVisible(true);
-        } catch (SQLException exception) {
+        } catch (SQLException | IllegalStateException exception) {
             showError("Could not open savings goals: " + exception.getMessage());
         }
     }
@@ -227,7 +228,7 @@ public class DashBoardGUI extends JFrame {
                     new FinancialDataFacade(databaseService),
                     AIServiceFactory.createDefaultService());
             new ChatGUI(aiController, email).setVisible(true);
-        } catch (SQLException exception) {
+        } catch (SQLException | IllegalStateException exception) {
             showError("Could not open the AI chat: " + exception.getMessage());
         }
     }
@@ -245,7 +246,7 @@ public class DashBoardGUI extends JFrame {
                     new BudgetAI(aiService),
                     databaseService);
             new BudgetGUI(budgetController, email).setVisible(true);
-        } catch (SQLException exception) {
+        } catch (SQLException | IllegalStateException exception) {
             showError("Could not open budget recommendations: " + exception.getMessage());
         }
     }

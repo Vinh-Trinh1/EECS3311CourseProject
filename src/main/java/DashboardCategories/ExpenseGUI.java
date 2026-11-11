@@ -2,7 +2,6 @@ package DashboardCategories;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -10,6 +9,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -35,6 +36,7 @@ public class ExpenseGUI extends JFrame {
     private final JComboBox<String> categoryField = new JComboBox<>(PREDEFINED_CATEGORIES);
     private final JTextArea monthlyTotals = new JTextArea(8, 32);
     private final JLabel statusLabel = new JLabel(" ");
+    private final JButton saveButton = new JButton("Categorize and save expense");
 
     public ExpenseGUI(ExpenseController controller, String accountEmail) throws SQLException {
         super("Monthly Expenses");
@@ -53,7 +55,6 @@ public class ExpenseGUI extends JFrame {
         addUserCategories();
         categoryField.setSelectedIndex(-1);
 
-        JButton saveButton = new JButton("Categorize and save expense");
         saveButton.addActionListener(event -> saveExpense());
         monthlyTotals.setEditable(false);
         monthlyTotals.setLineWrap(true);
@@ -107,60 +108,90 @@ public class ExpenseGUI extends JFrame {
             return;
         }
 
+        final Expense expense;
         try {
-            Expense expense = controller.recordExpense(
-                    amount, descriptionField.getText(), date);
-            Optional<String> suggestion;
-            boolean categorizerFailed = false;
-            try {
-                suggestion = controller.suggestCategory(expense);
-            } catch (IOException exception) {
-                suggestion = Optional.empty();
-                categorizerFailed = true;
-                JOptionPane.showMessageDialog(
-                        this,
-                        "AI categorization failed: " + exception.getMessage()
-                                + "\nChoose a category manually.",
-                        "Manual category selection",
-                        JOptionPane.INFORMATION_MESSAGE);
+            expense = controller.recordExpense(amount, descriptionField.getText(), date);
+        } catch (IllegalArgumentException exception) {
+            showError(exception.getMessage());
+            return;
+        }
+
+        saveButton.setEnabled(false);
+        statusLabel.setText("Getting an OpenAI category suggestion...");
+        new SwingWorker<Optional<String>, Void>() {
+            @Override
+            protected Optional<String> doInBackground() throws Exception {
+                return controller.suggestCategory(expense);
             }
 
-            if (!suggestion.isPresent() && !categorizerFailed) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "No AI category suggestion is available. Choose a category manually.",
-                        "Manual category selection",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-
-            if (suggestion.isPresent()) {
-                String suggestedCategory = suggestion.get();
-                String availableCategory = findCategory(suggestedCategory);
-                if (availableCategory == null) {
+            @Override
+            protected void done() {
+                saveButton.setEnabled(true);
+                try {
+                    finishExpenseSave(expense, date, get(), false);
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
                     JOptionPane.showMessageDialog(
-                            this,
-                            "AI could not match this expense to an available category. "
-                                    + "Choose one manually.",
+                            ExpenseGUI.this,
+                            "AI categorization was interrupted. Choose a category manually.",
                             "Manual category selection",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    int choice = JOptionPane.showConfirmDialog(
-                            this,
-                            "The suggested category is \"" + availableCategory
-                                    + "\". Is this correct?",
-                            "Confirm expense category",
-                            JOptionPane.YES_NO_OPTION);
-                    if (choice == JOptionPane.YES_OPTION) {
-                        categoryField.setSelectedItem(availableCategory);
-                    }
+                    finishExpenseSave(expense, date, Optional.empty(), true);
+                } catch (ExecutionException exception) {
+                    Throwable cause = exception.getCause();
+                    JOptionPane.showMessageDialog(
+                            ExpenseGUI.this,
+                            "AI categorization failed: "
+                                    + (cause == null ? exception.getMessage() : cause.getMessage())
+                                    + "\nChoose a category manually.",
+                            "Manual category selection",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    finishExpenseSave(expense, date, Optional.empty(), true);
                 }
             }
+        }.execute();
+    }
 
-            String selectedCategory = (String) categoryField.getSelectedItem();
-            if (selectedCategory == null) {
-                showError("Choose a category before saving the expense.");
-                return;
+    private void finishExpenseSave(
+            Expense expense, LocalDate date, Optional<String> suggestion,
+            boolean categorizerFailed) {
+        if (!suggestion.isPresent() && !categorizerFailed) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No AI category suggestion is available. Choose one manually.",
+                    "Manual category selection",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        if (suggestion.isPresent()) {
+            String suggestedCategory = suggestion.get();
+            String availableCategory = findCategory(suggestedCategory);
+            if (availableCategory == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "AI could not match this expense to an available category. "
+                                + "Choose one manually.",
+                        "Manual category selection",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                int choice = JOptionPane.showConfirmDialog(
+                        this,
+                        "The suggested category is \"" + availableCategory
+                                + "\". Is this correct?",
+                        "Confirm expense category",
+                        JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    categoryField.setSelectedItem(availableCategory);
+                }
             }
+        }
+
+        String selectedCategory = (String) categoryField.getSelectedItem();
+        if (selectedCategory == null) {
+            showError("Choose a category before saving the expense.");
+            return;
+        }
+        try {
             controller.assignCategory(accountEmail, expense, selectedCategory);
             categoryField.setSelectedIndex(-1);
             statusLabel.setText("Expense saved.");

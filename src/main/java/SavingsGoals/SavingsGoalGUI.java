@@ -2,10 +2,10 @@ package SavingsGoals;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 public class SavingsGoalGUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -31,6 +32,7 @@ public class SavingsGoalGUI extends JFrame {
     private final JTextField recommendationField = new JTextField(32);
     private final JTextArea recommendationArea = new JTextArea(5, 32);
     private final JLabel statusLabel = new JLabel(" ");
+    private final JButton recommendationButton = new JButton("Savings recommendation");
 
     public SavingsGoalGUI(SavingsController controller, String accountEmail)
             throws SQLException {
@@ -57,7 +59,6 @@ public class SavingsGoalGUI extends JFrame {
         progress.add(goalsField);
         progress.add(new JLabel("Contribution:"));
         progress.add(contributionField);
-        JButton recommendationButton = new JButton("Savings recommendation");
         recommendationButton.addActionListener(event -> requestRecommendation());
         recommendationField.setEditable(false);
         recommendationArea.setEditable(false);
@@ -131,16 +132,34 @@ public class SavingsGoalGUI extends JFrame {
             showError("Create or select a savings goal first.");
             return;
         }
-        try {
-            SavingsRecommendation recommendation =
-                    controller.generateSavingsRecommendation(accountEmail, goal.getId());
-            recommendationField.setText("$" + recommendation.getMonthlyTarget().toPlainString()
-                    + " per month");
-            recommendationArea.setText(recommendation.getAdvice());
-            statusLabel.setText("Recommendation generated.");
-        } catch (IllegalArgumentException | IOException | SQLException exception) {
-            showError(exception.getMessage());
-        }
+        final String goalId = goal.getId();
+        recommendationButton.setEnabled(false);
+        statusLabel.setText("Waiting for OpenAI...");
+        new SwingWorker<SavingsRecommendation, Void>() {
+            @Override
+            protected SavingsRecommendation doInBackground() throws Exception {
+                return controller.generateSavingsRecommendation(accountEmail, goalId);
+            }
+
+            @Override
+            protected void done() {
+                recommendationButton.setEnabled(true);
+                try {
+                    SavingsRecommendation recommendation = get();
+                    recommendationField.setText(
+                            "$" + recommendation.getMonthlyTarget().toPlainString()
+                                    + " per month");
+                    recommendationArea.setText(recommendation.getAdvice());
+                    statusLabel.setText("Recommendation generated.");
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    showError("The request was interrupted.");
+                } catch (ExecutionException exception) {
+                    Throwable cause = exception.getCause();
+                    showError(cause == null ? exception.getMessage() : cause.getMessage());
+                }
+            }
+        }.execute();
     }
 
     private void refreshGoals() throws SQLException {

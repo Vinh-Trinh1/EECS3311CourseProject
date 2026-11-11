@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1215</w><h>582</h></coordinates><panel_attributes>title:SD5 Budget vs Actual Spending (F09)
+obj=User~u
+obj=BudgetGUI~g
+obj=BudgetController~c
+obj=FinancialDataFacade~f
+obj=DatabaseService~db
+obj=Budget~b
+obj=Expense~ex
+u-&gt;g: selectPeriod(period)
+g-&gt;c: compareBudgetToActual(period)
+c-&gt;f: getBudget(userId, period)
+f-&gt;db: loadBudget(userId, period)
+db--&gt;f: Budget
+f--&gt;c: Budget
+c-&gt;f: getExpenses(userId, period)
+f-&gt;db: loadExpenses(userId, period)
+db--&gt;f: Expense list
+f--&gt;c: Expense list
+c-&gt;c: calculateActual()
+c-&gt;c: calculateDifference()
+c-&gt;b: getLimit(category)
+c-&gt;ex: getCategory()
+c--&gt;g: totals, percent over or under, category differences
+g--&gt;u: display comparison
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>632</y><w>1215</w><h>110</h></coordinates><panel_attributes>Alternative flows
+- No budget exists: 'a budget is required' message.
+- No expenses recorded: 'no expenses recorded' message.
+- Database cannot return the budget or expenses: user is told which could not be retrieved.
+No AI is involved (deterministic).</panel_attributes><additional_attributes/></element>
+</diagram>

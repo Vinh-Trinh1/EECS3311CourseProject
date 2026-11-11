@@ -2,10 +2,10 @@ package FeatureIntegration;
 
 import AIChat.AIController;
 import AIIntegration.AIService;
-import AIIntegration.AIServiceFactory;
 import AIIntegration.AIServiceProxy;
 import AIIntegration.ChatGPT5Response;
 import AIIntegration.ChatGPTAdapter;
+import AIIntegration.OfflineChatGPT5;
 import Budgeting.Budget;
 import Budgeting.BudgetAI;
 import Budgeting.BudgetController;
@@ -16,6 +16,7 @@ import DashboardCategories.ExpenseController;
 import DatabaseService.DatabaseService;
 import FinancialData.FinancialDataFacade;
 import SavingsGoals.SavingsController;
+import SavingsGoals.SavingsAI;
 import SavingsGoals.SavingsGoal;
 import SavingsGoals.SavingsGoalBuilder;
 import SavingsGoals.SavingsRecommendation;
@@ -66,7 +67,10 @@ public class AdvancedFeaturesTest {
     @Test
     public void savingsGoalsAreBuiltLinkedPersistedAndTrackContributions()
             throws SQLException, IOException {
-        SavingsController controller = new SavingsController(databaseService);
+        SavingsController controller = new SavingsController(
+                databaseService,
+                new FinancialDataFacade(databaseService),
+                new SavingsAI(offlineAiService()));
         SavingsGoal goal = controller.createGoal(
                 accountEmail, "Emergency fund", new BigDecimal("1000.00"),
                 12, "Checking");
@@ -108,7 +112,7 @@ public class AdvancedFeaturesTest {
             expenses.assignCategory(accountEmail, expense, "Groceries");
         }
 
-        AIService service = AIServiceFactory.createDefaultService();
+        AIService service = offlineAiService();
         FinancialDataFacade facade = new FinancialDataFacade(databaseService);
         BudgetController controller = new BudgetController(
                 facade, new BudgetAI(service), databaseService);
@@ -125,7 +129,7 @@ public class AdvancedFeaturesTest {
             throws SQLException, IOException {
         databaseService.saveBalance(accountEmail, new BigDecimal("321.45"));
         FinancialDataFacade facade = new FinancialDataFacade(databaseService);
-        AIController controller = new AIController(facade, AIServiceFactory.createDefaultService());
+        AIController controller = new AIController(facade, offlineAiService());
 
         String answer = controller.askQuestion(accountEmail, "What is my balance?");
 
@@ -146,8 +150,12 @@ public class AdvancedFeaturesTest {
         assertEquals(1, calls.get());
         assertEquals(
                 "Groceries",
-                new ExpenseCategorizerAdapter(AIServiceFactory.createDefaultService())
+                new ExpenseCategorizerAdapter(offlineAiService())
                         .categorizeExpense(new Expense(
                                 new BigDecimal("12.00"), LocalDate.now(), "grocery shop")));
+    }
+
+    private static AIService offlineAiService() {
+        return new AIServiceProxy(new ChatGPTAdapter(new OfflineChatGPT5()));
     }
 }

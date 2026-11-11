@@ -1,8 +1,7 @@
 package AIChat;
 
 import java.awt.BorderLayout;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -10,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 
 public class ChatGUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -18,10 +18,11 @@ public class ChatGUI extends JFrame {
     private final String accountEmail;
     private final JTextArea questionArea = new JTextArea(4, 36);
     private final JTextArea answerArea = new JTextArea(12, 36);
-    private final JLabel statusLabel = new JLabel("Offline AI demo");
+    private final JLabel statusLabel = new JLabel("OpenAI API");
+    private final JButton submitButton = new JButton("Ask");
 
     public ChatGUI(AIController controller, String accountEmail) {
-        super("AI Finance Chatbox (Offline Demo)");
+        super("AI Finance Chatbox");
         if (controller == null || accountEmail == null || accountEmail.trim().isEmpty()) {
             throw new IllegalArgumentException("Controller and account email are required.");
         }
@@ -32,7 +33,6 @@ public class ChatGUI extends JFrame {
         answerArea.setWrapStyleWord(true);
         questionArea.setLineWrap(true);
         questionArea.setWrapStyleWord(true);
-        JButton submitButton = new JButton("Ask");
         submitButton.addActionListener(event -> askQuestion());
 
         JPanel content = new JPanel(new BorderLayout(8, 8));
@@ -50,17 +50,38 @@ public class ChatGUI extends JFrame {
     }
 
     private void askQuestion() {
-        try {
-            String answer = controller.askQuestion(accountEmail, questionArea.getText());
-            answerArea.append("You: " + questionArea.getText().trim()
-                    + "\nAssistant: " + answer + "\n\n");
-            questionArea.setText("");
-            statusLabel.setText("Offline AI demo response");
-        } catch (IllegalArgumentException | IOException | SQLException exception) {
-            statusLabel.setText("Request failed.");
-            JOptionPane.showMessageDialog(
-                    this, exception.getMessage(), "Unable to answer question",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        final String question = questionArea.getText().trim();
+        submitButton.setEnabled(false);
+        statusLabel.setText("Waiting for OpenAI...");
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return controller.askQuestion(accountEmail, question);
+            }
+
+            @Override
+            protected void done() {
+                submitButton.setEnabled(true);
+                try {
+                    String answer = get();
+                    answerArea.append("You: " + question
+                            + "\nAssistant: " + answer + "\n\n");
+                    questionArea.setText("");
+                    statusLabel.setText("OpenAI response");
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    showError("The request was interrupted.");
+                } catch (ExecutionException exception) {
+                    Throwable cause = exception.getCause();
+                    showError(cause == null ? exception.getMessage() : cause.getMessage());
+                }
+            }
+        }.execute();
+    }
+
+    private void showError(String message) {
+        statusLabel.setText("Request failed.");
+        JOptionPane.showMessageDialog(
+                this, message, "Unable to answer question", JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1875</w><h>825</h></coordinates><panel_attributes>title:SD2 Dashboard and Expense Management (F02, F03, F04)
+obj=User~u
+obj=DashboardGUI~dg
+obj=DashboardController~dc
+obj=Account~ac
+obj=Category~cat
+obj=DatabaseService~db
+obj=ExpenseGUI~eg
+obj=ExpenseController~ec
+obj=ExpenseCategorizerAI~ai
+obj=AIServiceProxy~px
+obj=Expense~ex
+u-&gt;dg: submitBalance(accountId, amount)
+dg-&gt;dc: updateBalance(accountId, amount)
+dc-&gt;ac: updateBalance(amount)
+dc-&gt;db: saveAccount(account)
+db--&gt;dc: confirmation
+dc--&gt;dg: display updated balance
+u-&gt;dg: addCategory(name, balance)
+dg-&gt;dc: createCategory(name, balance)
+dc-&gt;cat: new Category(name, balance)
+dc-&gt;db: saveCategory(category)
+db--&gt;dc: confirmation
+dc--&gt;dg: display new category
+u-&gt;eg: submitExpense(amount, description, date)
+eg-&gt;ec: recordExpense(data)
+ec-&gt;ai: categorizeExpense(expense)
+ai-&gt;px: generateResponse(request)
+px--&gt;ai: AIResponse
+ai--&gt;ec: suggested Category
+ec--&gt;eg: show suggested category
+u-&gt;eg: confirmCategory(category)
+eg-&gt;ec: assignCategory(expense, category)
+ec-&gt;ex: new Expense(amount, date, category)
+ec-&gt;db: saveExpense(expense)
+db--&gt;ec: confirmation
+ec--&gt;eg: display updated expense
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>875</y><w>1875</w><h>126</h></coordinates><panel_attributes>Alternative flows
+- Non-numeric balance or category balance: user is asked to enter a valid number. Negative balances are accepted.
+- AI cannot categorize or is unavailable: user picks the category manually.
+- User rejects the AI category: user selects another.
+- Database save fails: user is told the information could not be saved.
+- CategoryGroup.add() is used when a category is placed inside a group (Composite).</panel_attributes><additional_attributes/></element>
+</diagram>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="DashboardCategories.RecurringAndTrendsTest" time="0.067" tests="8" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="23"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\vinht\EECS3311\EECS3311CourseProject\target\test-classes;C:\Users\vinht\EECS3311\EECS3311CourseProject\target\classes;C:\Users\vinht\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\vinht\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\vinht\.m2\repository\org\xerial\sqlite-jdbc\3.45.3.0\sqlite-jdbc-3.45.3.0.jar;C:\Users\vinht\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="user.timezone" value="America/Toronto"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="23"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="CA"/>
+    <property name="sun.boot.library.path" value="C:\Users\vinht\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_23.0.1.v20241024-1700\jre\bin"/>
+    <property name="sun.java.command" value="C:\Users\vinht\AppData\Local\Temp\surefire989489391478059\surefirebooter-20261111151007639_3.jar C:\Users\vinht\AppData\Local\Temp\surefire989489391478059 2026-11-11T15-10-07_539-jvmRun1 surefire-20261111151007639_1tmp surefire_0-20261111151007639_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\vinht\EECS3311\EECS3311CourseProject\target\test-classes;C:\Users\vinht\EECS3311\EECS3311CourseProject\target\classes;C:\Users\vinht\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\vinht\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\vinht\.m2\repository\org\xerial\sqlite-jdbc\3.45.3.0\sqlite-jdbc-3.45.3.0.jar;C:\Users\vinht\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;C:\Users\vinht\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\vinht"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-10-15"/>
+    <property name="java.home" value="C:\Users\vinht\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_23.0.1.v20241024-1700\jre"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\vinht\EECS3311\EECS3311CourseProject"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\vinht\AppData\Local\Temp\surefire989489391478059\surefirebooter-20261111151007639_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="23.0.1+11"/>
+    <property name="user.name" value="vinht"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-23.0.1+11"/>
+    <property name="localRepository" value="C:\Users\vinht\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="C:\Users\vinht\AppData\Local\Temp\"/>
+    <property name="java.version" value="23.0.1"/>
+    <property name="user.dir" value="C:\Users\vinht\EECS3311\EECS3311CourseProject\target\test-work"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Users\vinht\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_23.0.1.v20241024-1700\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Python314\Scripts\;C:\Python314\;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\CMake\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\Users\vinht\.pyenv\pyenv-win\bin;C:\Users\vinht\.pyenv\pyenv-win\shims;C:\Users\vinht\.local\bin;C:\Users\vinht\AppData\Local\Microsoft\WindowsApps;C:\Users\vinht\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\vinht\AppData\Roaming\npm;C:\Users\vinht\AppData\Local\Programs\Microsoft VS Code\bin\copilot-shim;C:\Users\vinht\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_23.0.1.v20241024-1700\jre\bin;C:\Users\vinht\Downloads\apache-maven-3.10.0-bin\apache-maven-3.10.0\bin;;c:\Users\vinht\AppData\Local\Programs\Microsoft VS Code\69047191fc\resources\app\node_modules.asar.unpacked\@vscode\ripgrep-universal\bin\win32-x64;c:\Users\vinht\AppData\Local\Programs\Microsoft VS Code\69047191fc\resources\app\node_modules.asar.unpacked\@github\copilot-sdk-win32-x64\ripgrep\bin\win32-x64;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="23.0.1+11"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="67.0"/>
+  </properties>
+  <testcase name="monthlyEndOfMonthRecurrenceRemainsAtMonthEnd" classname="DashboardCategories.RecurringAndTrendsTest" time="0.008"/>
+  <testcase name="recurrenceEndDateIsInclusiveAndStopsFutureOccurrences" classname="DashboardCategories.RecurringAndTrendsTest" time="0.011"/>
+  <testcase name="spendingTrendsRejectInvalidDateRange" classname="DashboardCategories.RecurringAndTrendsTest" time="0.003"/>
+  <testcase name="weeklyRecurrenceCatchesUpAndDoesNotDuplicateOccurrences" classname="DashboardCategories.RecurringAndTrendsTest" time="0.01"/>
+  <testcase name="recurrenceCanBeEditedWithoutChangingItsActiveState" classname="DashboardCategories.RecurringAndTrendsTest" time="0.01"/>
+  <testcase name="pausedRecurringExpenseDoesNotRecordDueExpenses" classname="DashboardCategories.RecurringAndTrendsTest" time="0.007"/>
+  <testcase name="spendingTrendsCompareSameLengthAdjacentPeriods" classname="DashboardCategories.RecurringAndTrendsTest" time="0.011"/>
+  <testcase name="recurrenceManagementIsScopedToAccount" classname="DashboardCategories.RecurringAndTrendsTest" time="0.005"/>
+</testsuite>

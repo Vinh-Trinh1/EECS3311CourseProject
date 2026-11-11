@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+<zoom_level>10</zoom_level>
+<element><id>UMLSequenceAllInOne</id><coordinates><x>20</x><y>20</y><w>1710</w><h>717</h></coordinates><panel_attributes>title:SD4 AI Budget Recommendation (F07)
+obj=User~u
+obj=BudgetGUI~g
+obj=BudgetController~c
+obj=FinancialDataFacade~f
+obj=DatabaseService~db
+obj=BudgetAI~ai
+obj=AIServiceProxy~px
+obj=ChatGPTAdapter~ad
+obj=ChatGPT5API~api
+obj=Budget~b
+u-&gt;g: requestBudget(monthly or weekly)
+g-&gt;c: generateBudget(period)
+c-&gt;f: getFinancialData(userId)
+f-&gt;db: load income, expenses, categories, goals
+db--&gt;f: records
+f--&gt;c: FinancialData
+c-&gt;ai: analyzeFinances(data)
+ai-&gt;ai: calculateBaseline(data)
+ai-&gt;px: generateResponse(request)
+px-&gt;px: checkAccess() and rate limit
+px-&gt;ad: generateResponse(request)
+ad-&gt;api: chatCompletion(payload)
+api--&gt;ad: raw response
+ad-&gt;ad: adaptResponse(raw)
+ad--&gt;px: AIResponse
+px--&gt;ai: AIResponse
+ai--&gt;c: Recommendation
+c-&gt;b: createBudget(recommendation)
+c-&gt;db: saveBudget(budget)
+c--&gt;g: display budget
+g--&gt;u: suggested budget and category amounts
+</panel_attributes><additional_attributes/></element>
+<element><id>UMLNote</id><coordinates><x>20</x><y>767</y><w>1710</w><h>94</h></coordinates><panel_attributes>Alternative flows
+- Not enough financial data or no recorded expenses: user is asked for more information and may retry later.
+- AI unavailable or rate limit hit: user is told to try again later.
+- Database retrieval fails: user is told the financial data could not be retrieved.</panel_attributes><additional_attributes/></element>
+</diagram>
