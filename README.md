@@ -10,17 +10,45 @@
 The SQLite implementation lives in `DatabaseService.DatabaseService`; feature
 controllers use it rather than owning persistence code.
 
-## Build and test
+## Build and launch
 
-Run the full test suite with Maven:
+Install a JDK (Java 8 or newer) and Maven, then open a terminal in the project
+root. Compile and run the test suite with:
 
-```text
-mvn test
+```powershell
+mvn clean test
 ```
 
-The Swing application entry point is `app.Main`.
+Launch the Swing application (this is the default when no command is supplied):
 
-## OpenAI API
+```powershell
+mvn exec:java
+```
+
+The application creates or opens `finance.db` in the project root. To launch the
+GUI explicitly, use `mvn exec:java "-Dexec.args=gui"`.
+
+### CLI
+
+Use the CLI help command to see the available commands:
+
+```powershell
+mvn exec:java "-Dexec.args=--help"
+```
+
+Example account commands:
+
+```powershell
+mvn exec:java "-Dexec.args=account create --email name@example.com --phone +15551234567 --password Secret123 --contact email"
+mvn exec:java "-Dexec.args=account login --identifier name@example.com --password Secret123"
+mvn exec:java "-Dexec.args=account verify --identifier name@example.com --code 123456"
+```
+
+The `status` command checks an email/phone and password; it does not print
+account details. CLI passwords may be saved in shell history or visible to
+other local processes, so prefer the GUI when that is a concern.
+
+## OpenAI API configuration
 
 The AI features use OpenAI's Responses API. In the repository root, copy
 `config.properties.example` to `config.properties`, then set `openai.api.key`
@@ -30,7 +58,13 @@ The default model is `gpt-4.1-mini`. To choose another model available to your
 API project, change `openai.model`. Environment variables `OPENAI_API_KEY` and
 `OPENAI_MODEL`, when set, override the corresponding local configuration values.
 
-Alternatively, you can configure the values in a temporary PowerShell session:
+In PowerShell, create the local configuration file with:
+
+```powershell
+Copy-Item config.properties.example config.properties
+```
+
+Alternatively, configure the values in a temporary PowerShell session:
 
 ```powershell
 $env:OPENAI_API_KEY = "your-api-key"
