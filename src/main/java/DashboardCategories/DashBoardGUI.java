@@ -87,6 +87,8 @@ public class DashBoardGUI extends JFrame {
         chatButton.addActionListener(event -> openChat());
         JButton budgetButton = new JButton("Suggested budget");
         budgetButton.addActionListener(event -> openBudget());
+        JButton comparisonButton = new JButton("Budget vs. actual spending");
+        comparisonButton.addActionListener(event -> openBudget());
         JButton recurringButton = new JButton("Recurring expenses");
         recurringButton.addActionListener(event -> openRecurringExpenses());
         JButton trendsButton = new JButton("Spending trends");
@@ -102,6 +104,7 @@ public class DashBoardGUI extends JFrame {
         actions.add(savingsButton);
         actions.add(chatButton);
         actions.add(budgetButton);
+        actions.add(comparisonButton);
         actions.add(recurringButton);
         actions.add(trendsButton);
         actions.add(balanceLabel);
@@ -111,6 +114,9 @@ public class DashBoardGUI extends JFrame {
         add(statusLabel, BorderLayout.SOUTH);
         setSize(560, 460);
         setLocationRelativeTo(null);
+        if (signedInEmail != null) {
+            loadSavedDashboardData(signedInEmail.trim());
+        }
     }
 
     private void saveBalance() {
@@ -141,6 +147,17 @@ public class DashBoardGUI extends JFrame {
 
     public void displayBalance(BigDecimal balance) {
         balanceLabel.setText("Current balance: $" + balance.toPlainString());
+    }
+
+    private void loadSavedDashboardData(String email) {
+        try {
+            BigDecimal balance = controller.getAccountBalance(email).setScale(2);
+            balanceField.setText(balance.toPlainString());
+            displayBalance(balance);
+            refreshCategories(email);
+        } catch (SQLException exception) {
+            showError("Could not load saved dashboard data: " + exception.getMessage());
+        }
     }
 
     private void saveCategory() {

@@ -32,6 +32,10 @@ public class DashboardController {
         databaseService.saveBalance(accountEmail.trim(), balance);
     }
 
+    public BigDecimal getAccountBalance(String accountEmail) throws SQLException {
+        return databaseService.getAccountBalance(requireAccountEmail(accountEmail));
+    }
+
     public Category createCategory(String accountEmail, String name, BigDecimal balance)
             throws SQLException {
         String owner = requireAccountEmail(accountEmail);

@@ -65,6 +65,25 @@ public class DashboardFeaturesTest {
     }
 
     @Test
+    public void dashboardBalanceAndCategoriesRemainAvailableAfterDatabaseReopens()
+            throws SQLException {
+        dashboardController.updateBalance(accountEmail, new BigDecimal("321.45"));
+        dashboardController.createCategory(
+                accountEmail, "Checking", new BigDecimal("125.50"));
+        databaseService.close();
+        databaseService = DatabaseService.getInstance();
+        dashboardController = new DashboardController(databaseService);
+
+        assertEquals(
+                new BigDecimal("321.45"),
+                dashboardController.getAccountBalance(accountEmail));
+        List<Category> categories = dashboardController.getCategories(accountEmail);
+        assertEquals(1, categories.size());
+        assertEquals("Checking", categories.get(0).getName());
+        assertEquals(new BigDecimal("125.50"), categories.get(0).getBalance());
+    }
+
+    @Test
     public void categoryGroupAggregatesNestedCategoryBalances() {
         Category checking = new Category("Checking", new BigDecimal("100.00"));
         Category savings = new Category("Savings", new BigDecimal("-25.00"));

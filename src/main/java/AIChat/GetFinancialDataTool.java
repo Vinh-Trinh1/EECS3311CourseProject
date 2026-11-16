@@ -25,6 +25,6 @@ public class GetFinancialDataTool implements AgentTool {
 
     @Override
     public String execute() throws SQLException {
-        return financialDataFacade.getFinancialData(accountEmail).toPromptSummary();
+        return financialDataFacade.getChatFinancialContext(accountEmail);
     }
 }

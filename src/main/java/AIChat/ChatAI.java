@@ -3,7 +3,6 @@ package AIChat;
 import AIIntegration.AIService;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Objects;
 
 public class ChatAI extends FinanceAgent {
@@ -18,24 +17,7 @@ public class ChatAI extends FinanceAgent {
         if (question == null || question.trim().isEmpty()) {
             throw new IllegalArgumentException("Enter a question.");
         }
-        String normalized = question.toLowerCase(Locale.ROOT);
-        String context = null;
-        if (isFinancialQuestion(normalized)) {
-            context = toolRegistry.execute("financial_data");
-        }
+        String context = toolRegistry.execute("financial_data");
         return run(question, context);
-    }
-
-    private static boolean isFinancialQuestion(String question) {
-        return question.contains("balance")
-                || question.contains("expense")
-                || question.contains("spend")
-                || question.contains("budget")
-                || question.contains("saving")
-                || question.contains("saved")
-                || question.contains("contribution")
-                || question.contains("goal")
-                || question.contains("financial")
-                || question.contains("money");
     }
 }

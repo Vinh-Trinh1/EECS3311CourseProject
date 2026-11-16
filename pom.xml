@@ -52,6 +52,9 @@
                 <version>3.2.5</version>
                 <configuration>
                     <workingDirectory>${project.build.directory}/test-work</workingDirectory>
+                    <systemPropertyVariables>
+                        <finance.db.path>${project.build.directory}/test-work/finance.db</finance.db.path>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

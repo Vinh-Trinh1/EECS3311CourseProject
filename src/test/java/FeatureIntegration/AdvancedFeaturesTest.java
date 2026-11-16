@@ -8,6 +8,7 @@ import AIIntegration.ChatGPTAdapter;
 import AIIntegration.OfflineChatGPT5;
 import Budgeting.Budget;
 import Budgeting.BudgetAI;
+import Budgeting.BudgetComparison;
 import Budgeting.BudgetController;
 import Budgeting.BudgetPeriod;
 import DashboardCategories.Expense;
@@ -26,6 +27,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
@@ -125,6 +128,38 @@ public class AdvancedFeaturesTest {
     }
 
     @Test
+    public void budgetComparisonReportsPerCategoryAndTotalVariance()
+            throws SQLException, IOException {
+        Map<String, BigDecimal> limits = new LinkedHashMap<>();
+        limits.put("Groceries", new BigDecimal("100.00"));
+        limits.put("Transportation", new BigDecimal("50.00"));
+        databaseService.saveBudget(Budget.createBudget(
+                accountEmail, BudgetPeriod.WEEKLY, limits, "Weekly test budget"));
+        ExpenseController expenseController = new ExpenseController(databaseService);
+        LocalDate referenceDate = LocalDate.of(2026, 11, 15);
+        Expense groceries = expenseController.recordExpense(
+                new BigDecimal("25.00"), "Groceries", referenceDate);
+        expenseController.assignCategory(accountEmail, groceries, "Groceries");
+        Expense transportation = expenseController.recordExpense(
+                new BigDecimal("60.00"), "Transit", referenceDate);
+        expenseController.assignCategory(accountEmail, transportation, "Transportation");
+
+        BudgetController controller = new BudgetController(
+                new FinancialDataFacade(databaseService),
+                new BudgetAI(offlineAiService()),
+                databaseService);
+        BudgetComparison comparison = controller.compareBudgetToActual(
+                accountEmail, BudgetPeriod.WEEKLY, referenceDate);
+
+        assertEquals(LocalDate.of(2026, 11, 9), comparison.getStartDate());
+        assertEquals(referenceDate, comparison.getEndDate());
+        assertEquals(new BigDecimal("150.00"), comparison.getBudgetTotal());
+        assertEquals(new BigDecimal("85.00"), comparison.getActualTotal());
+        assertEquals(new BigDecimal("10.00"), comparison.getVariance("Transportation"));
+        assertEquals(new BigDecimal("-65.00"), comparison.getTotalVariance());
+    }
+
+    @Test
     public void chatUsesFacadeAndOfflineAdapterToAnswerFinancialQuestions()
             throws SQLException, IOException {
         databaseService.saveBalance(accountEmail, new BigDecimal("321.45"));
@@ -156,6 +191,40 @@ public class AdvancedFeaturesTest {
 
         assertTrue(answer.contains("Total saved across tracked savings goals: $250.00"));
         assertTrue(answer.contains("Emergency fund saved $250.00 of $1000.00"));
+    }
+
+    @Test
+    public void chatContextIncludesCurrentMonthExpenseDescriptionAndAmount()
+            throws SQLException, IOException {
+        ExpenseController expenseController = new ExpenseController(databaseService);
+        Expense expense = expenseController.recordExpense(
+                new BigDecimal("300.00"), "Lexus car payment", LocalDate.now());
+        expenseController.assignCategory(accountEmail, expense, "Transportation");
+        AIController controller = new AIController(
+                new FinancialDataFacade(databaseService), offlineAiService());
+
+        String answer = controller.askQuestion(
+                accountEmail, "Am I spending too much on my current car?");
+
+        assertTrue(answer.contains("Lexus car payment"));
+        assertTrue(answer.contains("$300.00"));
+    }
+
+    @Test
+    public void chatUsesSavingsGoalContextForQuestionsWithoutFinancialKeywords()
+            throws SQLException, IOException {
+        SavingsController savingsController = new SavingsController(
+                databaseService,
+                new FinancialDataFacade(databaseService),
+                new SavingsAI(offlineAiService()));
+        savingsController.createGoal(
+                accountEmail, "Lexus", new BigDecimal("70000.00"), 24, "Checking");
+        AIController controller = new AIController(
+                new FinancialDataFacade(databaseService), offlineAiService());
+
+        String answer = controller.askQuestion(accountEmail, "How much does the Lexus cost?");
+
+        assertTrue(answer.contains("Lexus saved $0.00 of $70000.00"));
     }
 
     @Test

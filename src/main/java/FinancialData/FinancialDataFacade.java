@@ -2,12 +2,14 @@ package FinancialData;
 
 import Budgeting.Budget;
 import Budgeting.BudgetPeriod;
+import DashboardCategories.Expense;
 import DatabaseService.DatabaseService;
 import SavingsGoals.SavingsGoal;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,6 +35,37 @@ public class FinancialDataFacade {
                 databaseService.getAccountBalance(owner),
                 expenses,
                 databaseService.getSavingsGoals(owner));
+    }
+
+    public String getChatFinancialContext(String accountEmail) throws SQLException {
+        String owner = requireAccountEmail(accountEmail);
+        YearMonth currentMonth = YearMonth.now();
+        List<Expense> recentExpenses = databaseService.getExpensesBetween(
+                owner,
+                currentMonth.minusMonths(2).atDay(1),
+                LocalDate.now().plusDays(1));
+        StringBuilder context = new StringBuilder(getFinancialData(owner).toPromptSummary())
+                .append(". Individual expenses recorded in the last three calendar months "
+                        + "(newest first, up to 50): ");
+        if (recentExpenses.isEmpty()) {
+            context.append("none recorded");
+        } else {
+            for (int index = 0; index < recentExpenses.size(); index++) {
+                if (index > 0) {
+                    context.append("; ");
+                }
+                Expense expense = recentExpenses.get(index);
+                String description = expense.getDescription();
+                if (description.length() > 120) {
+                    description = description.substring(0, 120);
+                }
+                context.append(expense.getDate()).append(", ")
+                        .append(expense.getCategory()).append(", \"")
+                        .append(description).append("\" - $")
+                        .append(expense.getAmount().setScale(2).toPlainString());
+            }
+        }
+        return context.toString();
     }
 
     public Budget getBudget(String accountEmail, BudgetPeriod period) throws SQLException {

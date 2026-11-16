@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: AccountCreation.AccountControllerTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.947 s -- in AccountCreation.AccountControllerTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.000 s -- in AccountCreation.AccountControllerTest

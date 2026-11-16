@@ -7,7 +7,11 @@ import DashboardCategories.Category;
 import DashboardCategories.Expense;
 import DashboardCategories.RecurringExpense;
 import SavingsGoals.SavingsGoal;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,13 +27,12 @@ import java.util.Map;
 
 public class DatabaseService {
 
-    private static final String DATABASE_URL = "jdbc:sqlite:finance.db";
     private static DatabaseService instance;
 
     private final Connection connection;
 
     private DatabaseService() throws SQLException {
-        connection = DriverManager.getConnection(DATABASE_URL);
+        connection = DriverManager.getConnection(createDatabaseUrl());
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(
                     "CREATE TABLE IF NOT EXISTS account_balances ("
@@ -108,6 +111,42 @@ public class DatabaseService {
                             + "PRIMARY KEY (budget_id, category))");
             statement.executeUpdate("PRAGMA foreign_keys = ON");
         }
+    }
+
+    private static String createDatabaseUrl() throws SQLException {
+        String configuredPath = System.getProperty("finance.db.path");
+        Path databasePath;
+        if (configuredPath != null && !configuredPath.trim().isEmpty()) {
+            databasePath = Paths.get(configuredPath.trim());
+        } else {
+            Path repositoryRoot = findRepositoryRoot(
+                    Paths.get(System.getProperty("user.dir")).toAbsolutePath());
+            if (repositoryRoot != null) {
+                databasePath = repositoryRoot.resolve("finance.db");
+            } else {
+                Path dataDirectory = Paths.get(
+                        System.getProperty("user.home"), ".eecs3311-course-project");
+                try {
+                    Files.createDirectories(dataDirectory);
+                } catch (IOException exception) {
+                    throw new SQLException(
+                            "Could not create the application data directory.", exception);
+                }
+                databasePath = dataDirectory.resolve("finance.db");
+            }
+        }
+        return "jdbc:sqlite:" + databasePath.toAbsolutePath().normalize();
+    }
+
+    private static Path findRepositoryRoot(Path start) {
+        Path directory = start;
+        while (directory != null) {
+            if (Files.exists(directory.resolve(".git"))) {
+                return directory;
+            }
+            directory = directory.getParent();
+        }
+        return null;
     }
 
     public static synchronized DatabaseService getInstance() throws SQLException {
@@ -436,6 +475,40 @@ public class DatabaseService {
             }
         }
         return totals;
+    }
+
+    public List<Expense> getExpensesBetween(
+            String accountEmail, LocalDate startInclusive, LocalDate endExclusive)
+            throws SQLException {
+        if (accountEmail == null || accountEmail.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account email is required.");
+        }
+        if (startInclusive == null || endExclusive == null
+                || !startInclusive.isBefore(endExclusive)) {
+            throw new IllegalArgumentException("Expense date range is invalid.");
+        }
+        List<Expense> expenses = new ArrayList<>();
+        String sql = "SELECT amount_cents, expense_date, description, category "
+                + "FROM monthly_expenses "
+                + "WHERE account_email = ? COLLATE NOCASE "
+                + "AND expense_date >= ? AND expense_date < ? "
+                + "ORDER BY expense_date DESC, id DESC LIMIT 50";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, accountEmail.trim());
+            statement.setString(2, startInclusive.toString());
+            statement.setString(3, endExclusive.toString());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Expense expense = new Expense(
+                            BigDecimal.valueOf(resultSet.getLong("amount_cents"), 2),
+                            LocalDate.parse(resultSet.getString("expense_date")),
+                            resultSet.getString("description"));
+                    expense.assignCategory(resultSet.getString("category"));
+                    expenses.add(expense);
+                }
+            }
+        }
+        return expenses;
     }
 
     public BigDecimal getAccountBalance(String accountEmail) throws SQLException {

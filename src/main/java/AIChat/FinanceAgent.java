@@ -20,7 +20,10 @@ public abstract class FinanceAgent {
             prompt.append("Recent conversation:\n").append(previousTurns);
         }
         if (financialContext != null && !financialContext.trim().isEmpty()) {
-            prompt.append("Financial context: ").append(financialContext.trim()).append('\n');
+            prompt.append("Use the financial context to answer questions about the user's "
+                    + "recorded finances. Do not ask for details already present; if a detail "
+                    + "is not recorded, say so.\n")
+                    .append("Financial context: ").append(financialContext.trim()).append('\n');
         }
         prompt.append("Question: ").append(question.trim());
         String response = aiService.generateResponse(prompt.toString());
