@@ -24,7 +24,9 @@ final class AssistantCli {
         Objects.requireNonNull(output, "Output is required.");
 
         output.println("Finance assistant for " + accountEmail + ".");
-        output.println("Ask about recorded expenses, balance, or savings goals.");
+        output.println(
+                "Ask about recorded expenses, balance, savings goals, budgets, "
+                        + "or budget comparisons.");
         output.println("Type 'exit' or 'quit' to end the chat.");
 
         while (true) {
