@@ -57,15 +57,24 @@ public class FinancialData {
             }
         }
         if (!savingsGoals.isEmpty()) {
-            summary.append(". Savings goals: ");
+            BigDecimal totalSaved = BigDecimal.ZERO;
+            for (SavingsGoal goal : savingsGoals) {
+                totalSaved = totalSaved.add(goal.getCurrentAmount());
+            }
+            summary.append(". Total saved across tracked savings goals: $")
+                    .append(totalSaved.setScale(2).toPlainString())
+                    .append(". Savings goals: ");
             for (int index = 0; index < savingsGoals.size(); index++) {
                 if (index > 0) {
                     summary.append("; ");
                 }
                 SavingsGoal goal = savingsGoals.get(index);
-                summary.append(goal.getName()).append(" at ")
-                        .append(goal.calculateProgress()).append("% of $")
-                        .append(goal.getTargetAmount().toPlainString());
+                summary.append(goal.getName()).append(" saved $")
+                        .append(goal.getCurrentAmount().setScale(2).toPlainString())
+                        .append(" of $")
+                        .append(goal.getTargetAmount().setScale(2).toPlainString())
+                        .append(" (")
+                        .append(goal.calculateProgress()).append("%)");
             }
         }
         return summary.toString();

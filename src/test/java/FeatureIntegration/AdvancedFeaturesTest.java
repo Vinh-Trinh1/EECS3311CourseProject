@@ -138,6 +138,27 @@ public class AdvancedFeaturesTest {
     }
 
     @Test
+    public void chatIncludesTrackedSavingsWhenAskedHowMuchWasSaved()
+            throws SQLException, IOException {
+        SavingsController savingsController = new SavingsController(
+                databaseService,
+                new FinancialDataFacade(databaseService),
+                new SavingsAI(offlineAiService()));
+        SavingsGoal goal = savingsController.createGoal(
+                accountEmail, "Emergency fund", new BigDecimal("1000.00"),
+                12, "Checking");
+        savingsController.addContribution(
+                accountEmail, goal.getId(), new BigDecimal("250.00"));
+        AIController controller = new AIController(
+                new FinancialDataFacade(databaseService), offlineAiService());
+
+        String answer = controller.askQuestion(accountEmail, "How much have I saved?");
+
+        assertTrue(answer.contains("Total saved across tracked savings goals: $250.00"));
+        assertTrue(answer.contains("Emergency fund saved $250.00 of $1000.00"));
+    }
+
+    @Test
     public void aiProxyCachesAndAdapterTranslatesProviderResponses() throws IOException {
         AtomicInteger calls = new AtomicInteger();
         AIService service = new AIServiceProxy(new ChatGPTAdapter(prompt -> {

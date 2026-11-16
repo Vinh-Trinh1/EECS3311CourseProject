@@ -1,0 +1,16 @@
+BEGIN TRANSACTION;
+
+DELETE FROM budget_lines
+WHERE budget_id IN (
+    SELECT id FROM budgets WHERE account_email = 'vinht@my.yorku.ca'
+);
+DELETE FROM budgets WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM recurring_expense_occurrences WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM recurring_expenses WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM savings_goals WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM monthly_expenses WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM dashboard_categories WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM account_balances WHERE account_email = 'vinht@my.yorku.ca';
+DELETE FROM account_users WHERE email = 'vinht@my.yorku.ca';
+
+COMMIT;

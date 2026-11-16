@@ -85,19 +85,13 @@ public final class OpenAIResponsesAPI implements ChatGPT5API {
 
     private static String readResponseBody(HttpURLConnection connection, int status)
             throws IOException {
-        if (status >= 200 && status < 300) {
-            return readBody(connection.getInputStream());
+        InputStream stream = status >= 200 && status < 300
+                ? connection.getInputStream()
+                : connection.getErrorStream();
+        if (stream == null) {
+            return "";
         }
-        InputStream errorStream = connection.getErrorStream();
-        if (errorStream != null) {
-            return readBody(errorStream);
-        }
-        try {
-            return readBody(connection.getInputStream());
-        } catch (IOException exception) {
-            InputStream fallbackStream = connection.getErrorStream();
-            return fallbackStream == null ? "" : readBody(fallbackStream);
-        }
+        return readBody(stream);
     }
 
     private static URL createDefaultEndpoint() {
@@ -129,29 +123,72 @@ public final class OpenAIResponsesAPI implements ChatGPT5API {
         if (response == null) {
             throw new IOException("OpenAI returned an empty response.");
         }
-        JsonNode output = response.path("output");
         StringBuilder text = new StringBuilder();
-        if (output.isArray()) {
-            for (JsonNode item : output) {
-                JsonNode content = item.path("content");
-                if (!content.isArray()) {
-                    continue;
-                }
-                for (JsonNode part : content) {
-                    if ("output_text".equals(part.path("type").asText())
-                            && part.path("text").isTextual()) {
-                        if (text.length() > 0) {
-                            text.append('\n');
-                        }
-                        text.append(part.path("text").asText());
-                    }
-                }
-            }
-        }
+        appendTextFromNode(text, response);
         if (text.toString().trim().isEmpty()) {
             throw new IOException("OpenAI returned no text in its response.");
         }
         return text.toString();
+    }
+
+    private static void appendTextFromNode(StringBuilder text, JsonNode node) {
+        if (node == null || node.isNull()) {
+            return;
+        }
+        if (node.isTextual()) {
+            appendText(text, node.asText());
+            return;
+        }
+        if (node.isArray()) {
+            for (JsonNode element : node) {
+                appendTextFromNode(text, element);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+
+        JsonNode typeNode = node.path("type");
+        JsonNode textNode = node.path("text");
+        if (("output_text".equals(typeNode.asText()) || "text".equals(typeNode.asText()))
+                && textNode.isTextual()) {
+            appendText(text, textNode.asText());
+            return;
+        }
+
+        JsonNode contentNode = node.path("content");
+        if (contentNode.isArray() || contentNode.isObject()) {
+            appendTextFromNode(text, contentNode);
+            return;
+        }
+
+        JsonNode outputNode = node.path("output");
+        if (outputNode.isArray() || outputNode.isObject()) {
+            appendTextFromNode(text, outputNode);
+            return;
+        }
+
+        JsonNode itemsNode = node.path("items");
+        if (itemsNode.isArray() || itemsNode.isObject()) {
+            appendTextFromNode(text, itemsNode);
+            return;
+        }
+
+        JsonNode messageNode = node.path("message");
+        if (messageNode.isObject() || messageNode.isArray()) {
+            appendTextFromNode(text, messageNode);
+        }
+    }
+
+    private static void appendText(StringBuilder text, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return;
+        }
+        if (text.length() > 0) {
+            text.append('\n');
+        }
+        text.append(value);
     }
 
     private static String formatApiError(int status, String responseBody) {

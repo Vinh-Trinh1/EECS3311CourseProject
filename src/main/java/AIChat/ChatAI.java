@@ -32,6 +32,8 @@ public class ChatAI extends FinanceAgent {
                 || question.contains("spend")
                 || question.contains("budget")
                 || question.contains("saving")
+                || question.contains("saved")
+                || question.contains("contribution")
                 || question.contains("goal")
                 || question.contains("financial")
                 || question.contains("money");
