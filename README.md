@@ -44,6 +44,17 @@ mvn exec:java "-Dexec.args=account login --identifier name@example.com --passwor
 mvn exec:java "-Dexec.args=account verify --identifier name@example.com --code 123456"
 ```
 
+Start an interactive CLI session with the finance assistant:
+
+```powershell
+mvn compile exec:java "-Dexec.args=assistant chat --email name@example.com"
+```
+
+Ask questions about the selected account's recorded finances, then enter
+`exit` or `quit` to end the session. The assistant loads financial context for
+each question and retains recent turns while the CLI session is running. Set
+`OPENAI_API_KEY` or configure `config.properties` before asking questions.
+
 The `status` command checks an email/phone and password; it does not print
 account details. CLI passwords may be saved in shell history or visible to
 other local processes, so prefer the GUI when that is a concern.
